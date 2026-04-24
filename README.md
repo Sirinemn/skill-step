@@ -32,13 +32,11 @@ Ce projet est développé avec une architecture moderne et robuste, respectant l
 ## 📋 Roadmap & Sprints (Méthode Agile)
 Le projet est réalisé suivant un découpage strict en sprints pour garantir une livraison continue (MVP) :
 ## 🏗 Structure du Projet
-
 ```text
 skill-step/
 ├── skillstep-api/   # Backend Spring Boot
 └── skillstep-ui/    # Frontend Angular
-## 🚀 Installation & Lancement
-
+```
 ---
 
 ## 🚀 Installation & Lancement
@@ -52,11 +50,14 @@ skill-step/
 ```bash
 cd skillstep-api
 ./mvnw spring-boot:run
+```
 
 ### Lancement du Frontend
+```bash
 cd skillstep-ui
 npm install
 ng serve
+```
 
 ## 👩‍💻 À propos de l'auteur
 Sirine MNAFFAKH - Conceptrice Développeuse Full-Stack
