@@ -1,0 +1,26 @@
+# --- Common ---
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# --- Backend (Spring Boot) ---
+skillstep-api/target/
+skillstep-api/.mvn/
+skillstep-api/mvnw
+skillstep-api/mvnw.cmd
+# Ne jamais pousser les secrets !
+skillstep-api/src/main/resources/application-local.yml
+
+# --- Frontend (Angular) ---
+skillstep-ui/node_modules/
+skillstep-ui/dist/
+skillstep-ui/.angular/
+skillstep-ui/.pnp/
+skillstep-ui/.pnp.js
+
+# --- OS / IDE ---
+.project
+.classpath
+.settings/
+bin/
