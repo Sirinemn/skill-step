@@ -12,7 +12,7 @@ import java.util.List;
 public class ApiError {
 
     private int status;
-    private String code;
+    private ErrorCode code;
     private String message;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
@@ -25,21 +25,22 @@ public class ApiError {
     @Builder
     public static class FieldError {
         private String field;
-        private String rejectedValue;
+        private Object rejectedValue;
         private String message;
     }
 
     //Factory metho - évite d'avoir à faire ApiError.builder()... à chaque fois
-    public static ApiError of(int status, String code, String message) {
+    public static ApiError of(int status, ErrorCode code, String message) {
         return ApiError.builder()
                 .status(status)
                 .code(code)
                 .message(message)
                 .timestamp(OffsetDateTime.now())
+                .errors(List.of())
                 .build();
     }
 
-     public static ApiError of(int status, String code, String message, List<FieldError> errors) {
+     public static ApiError of(int status, ErrorCode code, String message, List<FieldError> errors) {
         return ApiError.builder()
                 .status(status)
                 .code(code)
