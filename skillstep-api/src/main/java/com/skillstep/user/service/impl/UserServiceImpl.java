@@ -1,5 +1,6 @@
 package com.skillstep.user.service.impl;
 
+import com.skillstep.shared.exception.ResourceNotFoundException;
 import com.skillstep.user.domain.User;
 import com.skillstep.user.repository.UserRepository;
 import com.skillstep.user.service.IUserService;
@@ -38,6 +39,7 @@ public class UserServiceImpl implements IUserService {
     public User findById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", id));
+
     }
     @Override
     @Transactional
