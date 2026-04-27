@@ -11,8 +11,8 @@
 	<groupId>com.skillstep</groupId>
 	<artifactId>skillstep-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<description>Skill-Step — Learning tracker SaaS</description>
 	<name/>
-	<description/>
 	<url/>
 	<licenses>
 		<license/>
@@ -36,11 +36,16 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
+			<version>4.0.4</version>
 		</dependency>
 		<!-- Security + OAuth2 Google -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -73,6 +78,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
+			<version>42.7.7</version>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- Documentation API avec Swagger -->
@@ -142,6 +148,11 @@
 								<path>
 									<groupId>org.projectlombok</groupId>
 									<artifactId>lombok</artifactId>
+								</path>
+								<path>
+									<groupId>org.mapstruct</groupId>
+									<artifactId>mapstruct-processor</artifactId>
+									<version>${mapstruct.version}</version>
 								</path>
 							</annotationProcessorPaths>
 						</configuration>
