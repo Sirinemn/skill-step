@@ -3,7 +3,8 @@
 .idea/
 .vscode/
 *.log
-
+.env
+*.env
 # --- Backend (Spring Boot) ---
 skillstep-api/target/
 skillstep-api/.mvn/
