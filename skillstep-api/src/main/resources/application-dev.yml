@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/skillstep_db
+    username: ${DB_USERNAME:skillstep}
+    password: ${DB_PASSWORD:skillstep}
+  jpa:
+    show-sql: true                    # logs SQL visibles en dev
+    properties:
+      hibernate:
+        format_sql: true
+
+  # En dev, on autorise la console H2 et Swagger sans restriction
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+
+logging:
+  level:
+    com.skillstep: DEBUG              # logs détaillés de ton code
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
