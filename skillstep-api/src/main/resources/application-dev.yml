@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/skillstep_db
-    username: ${DB_USERNAME:skillstep}
-    password: ${DB_PASSWORD:skillstep}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     show-sql: true                    # logs SQL visibles en dev
     properties:
