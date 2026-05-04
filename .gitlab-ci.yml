@@ -8,7 +8,7 @@ variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end"
   SPRING_PROFILES_ACTIVE: "test"
-  # ↓ le sous-dossier contenant ton pom.xml
+  # ↓ le sous-dossier contenant le pom.xml
   BUILD_DIR: "skillstep-api"
 
 cache:
