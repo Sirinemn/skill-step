@@ -5,12 +5,12 @@ stages:
   - test
 
 variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/skillstep-api/.m2/repository"
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end"
-  # Profil de test — désactive Flyway et utilise H2 en mémoire
   SPRING_PROFILES_ACTIVE: "test"
+  # ↓ le sous-dossier contenant ton pom.xml
+  BUILD_DIR: "skillstep-api"
 
-# Cache Maven entre les jobs pour éviter de retélécharger les dépendances
 cache:
   key: "$CI_COMMIT_REF_SLUG"
   paths:
@@ -19,7 +19,7 @@ cache:
 build:
   stage: build
   script:
-    - mvn $MAVEN_CLI_OPTS compile
+    - cd $BUILD_DIR && mvn $MAVEN_CLI_OPTS compile
   only:
     - merge_requests
     - main
@@ -28,13 +28,13 @@ build:
 test:
   stage: test
   script:
-    - mvn $MAVEN_CLI_OPTS test
+    - cd $BUILD_DIR && mvn $MAVEN_CLI_OPTS test
   artifacts:
     when: always
     reports:
-      junit: target/surefire-reports/TEST-*.xml   # résultats visibles dans GitLab
+      junit: $BUILD_DIR/target/surefire-reports/TEST-*.xml
     paths:
-      - target/surefire-reports/
+      - $BUILD_DIR/target/surefire-reports/
     expire_in: 1 week
   only:
     - merge_requests
