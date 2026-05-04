@@ -5,7 +5,7 @@ stages:
   - test
 
 variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/skillstep-api/.m2/repository"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end"
   # Profil de test — désactive Flyway et utilise H2 en mémoire
   SPRING_PROFILES_ACTIVE: "test"
