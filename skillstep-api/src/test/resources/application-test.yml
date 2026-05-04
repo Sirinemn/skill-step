@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop    # H2 crée le schéma depuis les entités
+    database-platform: org.hibernate.dialect.H2Dialect
+  flyway:
+    enabled: false             # pas de migrations sur H2
+
+  # Fausses valeurs pour satisfaire Spring Security sans appel réseau
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: test-client-id
+            client-secret: test-secret
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
