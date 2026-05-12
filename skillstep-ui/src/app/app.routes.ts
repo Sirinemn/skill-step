@@ -1,19 +1,14 @@
 import { Routes } from '@angular/router';
-import { unauthGuard } from './core/guards/unauth.guard';
-import { HomeComponent } from './features/auth/pages/home/home.component';
-import { LoginComponent } from './features/auth/pages/login/login.component';
 
 export const routes: Routes = [
 
- {
-    path: '',             // /auth → landing page
-    canActivate: [unauthGuard],
-    component: HomeComponent
-  },
+  // ── Auth (landing + callback) ──────────────────────────
+  // Préfixe '' = routes à la racine : '/' et '/auth/callback'
   {
-    path: 'login',        // /auth/login → page connexion dédiée
-    canActivate: [unauthGuard],
-    component: LoginComponent
+    path: 'auth',
+    loadChildren: () =>
+      import('./features/auth/auth.routes')
+        .then(m => m.AUTH_ROUTES),
   },
 
   // Redirect racine vers auth (landing page)
