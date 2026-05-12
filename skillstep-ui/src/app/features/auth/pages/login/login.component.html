@@ -1,0 +1,246 @@
+<!-- src/app/features/auth/pages/login/login.component.html -->
+<div class="min-h-screen bg-bg-base">
+
+  <!-- ═══════════════════════════════════════════
+       NAVBAR
+  ════════════════════════════════════════════ -->
+  <nav class="bg-bg-surface border-b border-border-soft sticky top-0 z-50">
+    <div class="container-app flex items-center justify-between h-16">
+
+      <!-- Logo -->
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">🚀</span>
+        <span class="text-xl font-bold text-text-heading">Skill-Step</span>
+      </div>
+
+      <!-- Liens navigation (masqués mobile) -->
+      <div class="hidden md:flex items-center gap-1">
+        <a href="#features" class="btn-ghost">Fonctionnalités</a>
+        <a href="#stats"    class="btn-ghost">À propos</a>
+      </div>
+
+      <!-- CTA Connexion -->
+      <button
+        (click)="onLoginWithGoogle()"
+        class="btn-primary text-sm px-5 py-2.5">
+        Connexion
+      </button>
+
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       HERO SECTION
+  ════════════════════════════════════════════ -->
+  <section class="bg-gradient-hero">
+    <div class="container-app py-20 md:py-28">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+
+        <!-- Texte gauche -->
+        <div class="animate-fade-up">
+
+          <!-- Badge -->
+          <span class="badge-primary mb-6 inline-flex">
+            ✨ Journal d'apprentissage intelligent
+          </span>
+
+          <!-- Titre principal -->
+          <h1 class="text-4xl md:text-5xl font-extrabold text-text-heading
+                      leading-tight mb-4">
+            Apprenez chaque jour.<br>
+            <span class="text-gradient">Progressez</span> pour<br>
+            votre avenir.
+          </h1>
+
+          <!-- Sous-titre -->
+          <p class="text-text-body text-lg leading-relaxed mb-8 max-w-md">
+            Enregistrez vos apprentissages, suivez votre progression
+            et générez des rapports professionnels.
+          </p>
+
+          <!-- Boutons CTA -->
+          <div class="flex flex-wrap gap-4">
+            <button
+              (click)="onLoginWithGoogle()"
+              class="btn-primary gap-3 text-base px-8 py-4">
+              <!-- Icône Google SVG -->
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92
+                         c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57
+                         c2.08-1.92 3.28-4.74 3.28-8.09z"
+                      fill="#fff" opacity=".9"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77
+                         c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93
+                         -6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      fill="#fff" opacity=".9"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43
+                         .35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43
+                         3.45 1.18 4.93l3.66-2.84z"
+                      fill="#fff" opacity=".9"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15
+                         C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18
+                         7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                      fill="#fff" opacity=".9"/>
+              </svg>
+              Commencer gratuitement
+            </button>
+
+            <button class="btn-secondary text-base px-8 py-4">
+              Voir la démo
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Illustration droite -->
+        <div class="hidden md:flex justify-center animate-fade-in">
+          <div class="relative">
+
+            <!-- Card flottante principale -->
+            <div class="card w-72 shadow-card-hover">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-primary-500
+                            flex items-center justify-center text-white text-lg">
+                  🚀
+                </div>
+                <div>
+                  <p class="font-semibold text-text-heading text-sm">Skill-Step</p>
+                  <p class="text-text-muted text-xs">Tableau de bord</p>
+                </div>
+              </div>
+              <!-- Mini stats -->
+              <div class="grid grid-cols-2 gap-3">
+                <div class="bg-primary-50 rounded-xl p-3 text-center">
+                  <p class="text-2xl font-bold text-primary-500">128</p>
+                  <p class="text-xs text-text-muted">Total logs</p>
+                </div>
+                <div class="bg-teal-50 rounded-xl p-3 text-center">
+                  <p class="text-2xl font-bold text-teal-600">12j</p>
+                  <p class="text-xs text-text-muted">Streak actuel</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Badge flottant -->
+            <div class="absolute -top-4 -right-4 bg-white rounded-2xl
+                        shadow-card px-4 py-2 flex items-center gap-2
+                        border border-border-card">
+              <span class="text-lg">🎯</span>
+              <div>
+                <p class="text-xs font-semibold text-text-heading">Spring Boot</p>
+                <p class="text-xs text-text-muted">+45 min aujourd'hui</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       FEATURES SECTION
+  ════════════════════════════════════════════ -->
+  <section id="features" class="section bg-bg-surface">
+    <div class="container-app">
+
+      <!-- En-tête section -->
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-text-heading mb-3">
+          Tout ce dont vous avez besoin
+        </h2>
+        <p class="text-text-muted text-lg max-w-xl mx-auto">
+          Un outil simple, puissant, conçu pour les développeurs
+          qui apprennent chaque jour.
+        </p>
+      </div>
+
+      <!-- Grid des 4 features -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div
+          *ngFor="let feature of features"
+          class="card-hover text-center group">
+
+          <!-- Icône -->
+          <div class="w-16 h-16 rounded-2xl mx-auto mb-4
+                      flex items-center justify-center text-3xl
+                      transition-transform duration-200
+                      group-hover:scale-110"
+               [ngClass]="feature.iconBg">
+            {{ feature.icon }}
+          </div>
+
+          <!-- Titre -->
+          <h3 class="font-semibold text-text-heading mb-2">
+            {{ feature.title }}
+          </h3>
+
+          <!-- Description -->
+          <p class="text-text-muted text-sm">
+            {{ feature.description }}
+          </p>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       STATS SECTION
+  ════════════════════════════════════════════ -->
+  <section id="stats" class="section bg-gradient-hero">
+    <div class="container-app">
+
+      <div class="grid grid-cols-3 gap-8 max-w-2xl mx-auto text-center">
+        <div *ngFor="let stat of stats" class="animate-fade-up">
+          <p class="text-4xl font-extrabold text-primary-500 mb-1">
+            {{ stat.value }}
+          </p>
+          <p class="text-text-muted font-medium">{{ stat.label }}</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       CTA FINAL
+  ════════════════════════════════════════════ -->
+  <section class="section bg-bg-surface">
+    <div class="container-app text-center">
+
+      <h2 class="text-3xl font-bold text-text-heading mb-4">
+        Prêt à documenter votre progression ?
+      </h2>
+      <p class="text-text-muted text-lg mb-8 max-w-md mx-auto">
+        Rejoignez des milliers de développeurs qui tracent
+        leur apprentissage chaque jour.
+      </p>
+      <button
+        (click)="onLoginWithGoogle()"
+        class="btn-primary text-base px-10 py-4">
+        Commencer gratuitement — c'est gratuit
+      </button>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════════ -->
+  <footer class="bg-text-heading text-white py-8">
+    <div class="container-app flex flex-col md:flex-row
+                items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">🚀</span>
+        <span class="font-bold">Skill-Step</span>
+      </div>
+      <p class="text-sm text-gray-400">
+        &copy; {{ currentYear }} Skill-Step — Le journal d'apprentissage des talents de demain
+      </p>
+    </div>
+  </footer>
+
+</div>

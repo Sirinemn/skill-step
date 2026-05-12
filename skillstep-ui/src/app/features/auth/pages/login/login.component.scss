@@ -1,0 +1,10 @@
+// Smooth scroll sur les ancres (#features, #stats)
+:host {
+  display: block;
+  scroll-behavior: smooth;
+}
+
+// Légère animation au survol des feature cards
+.group:hover .group-hover\:scale-110 {
+  transform: scale(1.1);
+}
