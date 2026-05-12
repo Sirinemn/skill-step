@@ -3,6 +3,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { FooterComponent } from "../../../../shared/components/footer/footer.component";
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from "../../../../shared/components/navbar/navbar.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -41,10 +42,13 @@ export class HomeComponent {
     { value: '98%',  label: 'Satisfaction' },
   ];
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private readonly router: Router) {}
 
   onLogin(): void {
     this.authService.loginWithGoogle();
+  }
+  onGetStarted(): void {
+    this.router.navigate(['auth/login']);
   }
 
 }
