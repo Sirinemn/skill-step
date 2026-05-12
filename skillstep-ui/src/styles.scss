@@ -4,9 +4,9 @@
 // base      → reset CSS (marges, box-sizing...)
 // components → classes composants qu'on définit dans @layer components
 // utilities  → px-4, flex, text-lg... toutes les classes utilitaires
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 // Police Inter depuis Google Fonts
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -29,6 +29,7 @@
   --transition-base:     all 0.2s ease;
 }
 
+/* stylelint-disable at-rule-no-unknown */
 // ─────────────────────────────────────────────────────────
 // BASE — styles appliqués au HTML brut
 // ─────────────────────────────────────────────────────────
