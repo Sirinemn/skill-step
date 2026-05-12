@@ -1,0 +1,22 @@
+<nav class="bg-bg-surface border-b border-border-soft sticky top-0 z-50">
+  <div class="container-app flex items-center justify-between h-16">
+
+    <!-- Logo -->
+    <a routerLink="/auth" class="flex items-center gap-2 no-underline">
+      <span class="text-2xl">🚀</span>
+      <span class="text-xl font-bold text-text-heading">Skill-Step</span>
+    </a>
+
+    <!-- Liens (desktop) -->
+    <div class="hidden md:flex items-center gap-1">
+      <a href="#features" class="btn-ghost">Fonctionnalités</a>
+      <a href="#stats"    class="btn-ghost">À propos</a>
+    </div>
+
+    <!-- CTA -->
+    <button (click)="onLogin()" class="btn-primary text-sm px-5 py-2.5">
+      Connexion
+    </button>
+
+  </div>
+</nav>
