@@ -23,11 +23,11 @@
             et générez des rapports professionnels.
           </p>
           <div class="flex flex-wrap gap-4">
-            <button (click)="onLogin()"
+            <button (click)="onGetStarted()"
                     class="btn-primary text-base px-8 py-4">
               Commencer gratuitement
             </button>
-            <a routerLink="/auth/login" class="btn-secondary text-base px-8 py-4">
+            <a (click)="onLogin()" class="btn-secondary text-base px-8 py-4">
               Se connecter
             </a>
           </div>
@@ -124,7 +124,7 @@
       <p class="text-text-muted text-lg mb-8 max-w-md mx-auto">
         Rejoignez des milliers de développeurs.
       </p>
-      <button (click)="onLogin()" class="btn-primary text-base px-10 py-4">
+      <button (click)="onGetStarted()" class="btn-primary text-base px-10 py-4">
         Commencer gratuitement
       </button>
     </div>
