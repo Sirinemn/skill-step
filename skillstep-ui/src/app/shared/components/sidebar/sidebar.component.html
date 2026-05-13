@@ -1,0 +1,61 @@
+<aside class="w-44 min-h-screen bg-bg-surface border-r border-border-soft
+              flex flex-col py-5 px-3 shrink-0">
+
+  <!-- Logo -->
+  <div class="flex items-center gap-2 px-3 mb-8">
+    <div class="w-8 h-8 rounded-lg bg-primary-500
+                flex items-center justify-center
+                text-white text-sm font-bold">
+      {{ user$()?.firstName?.charAt(0)?.toUpperCase() || 'S' }}
+    </div>
+    <span class="font-bold text-text-heading text-base">Skill-Step</span>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex flex-col gap-1 flex-1">
+    <a
+    
+      *ngFor="let item of navItems"
+      [routerLink]="item.route"
+      routerLinkActive="active"
+      class="nav-item">
+      <span class="text-base leading-none">{{ item.icon }}</span>
+      <span>{{ item.label }}</span>
+    </a>
+  </nav>
+
+  <!-- User + Logout en bas -->
+  <div class="border-t border-border-soft pt-4 mt-4">
+
+    <!-- Avatar + nom -->
+    <div class="flex items-center gap-2 px-3 mb-3" *ngIf="user$()">
+      <img
+        *ngIf="user$()?.avatarUrl; else initials"
+        [src]="user$()!.avatarUrl!"
+        [alt]="displayName$()"
+        class="w-7 h-7 rounded-full object-cover"
+      />
+      <ng-template #initials>
+        <div class="w-7 h-7 rounded-full bg-primary-100
+                    flex items-center justify-center
+                    text-primary-500 text-xs font-bold">
+          {{ displayName$().charAt(0).toUpperCase() }}
+        </div>
+      </ng-template>
+      <span class="text-xs text-text-muted truncate max-w-24">
+        {{ displayName$() }}
+      </span>
+    </div>
+
+    <!-- Bouton déconnexion -->
+    <button
+      (click)="onLogout()"
+      class="nav-item w-full text-error hover:bg-red-50
+             hover:text-error transition-colors">
+      <span>🚪</span>
+      <span>Déconnexion</span>
+    </button>
+
+  </div>
+
+</aside>
