@@ -6,8 +6,18 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 export const DASHBOARD_ROUTES: Routes = [
   {
     path: '',
-    title: 'Dashboard',
     canActivate: [authGuard],
-    component: DashboardComponent
+    // Le layout enveloppe le dashboard
+    loadComponent: () =>
+      import('../../layouts/main-layout/main-layout.component')
+        .then(m => m.MainLayoutComponent),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/dashboard/dashboard.component')
+            .then(m => m.DashboardComponent),
+      }
+    ]
   },
 ];

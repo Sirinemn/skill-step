@@ -1,1 +1,189 @@
-<p>dashboard works!</p>
+<!-- src/app/features/dashboard/pages/dashboard/dashboard.component.html -->
+<div class="p-8">
+
+  <!-- En-tête salutation -->
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-text-heading mb-1">
+      Bonjour {{ firstName$() }} 👋
+    </h1>
+    <p class="text-text-muted text-sm">
+      <span class="border-b border-primary-300 text-primary-500 cursor-pointer">
+        Voici un aperçu de ta progression et de tes apprentissages récents.
+      </span>
+    </p>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div
+      *ngFor="let kpi of kpiCards"
+      class="card"
+      [ngClass]="kpi.bgColor">
+      <p class="text-2xl font-bold mb-1" [ngClass]="kpi.color">
+        {{ kpi.value }}
+      </p>
+      <p class="text-text-muted text-sm">{{ kpi.label }}</p>
+    </div>
+  </div>
+
+  <!-- Contenu principal — 2 colonnes -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Colonne gauche (2/3) -->
+    <div class="lg:col-span-2 flex flex-col gap-4">
+
+      <!-- Apprentissages récents -->
+      <div>
+        <h2 class="text-base font-semibold text-text-heading mb-3">
+          Apprentissages récents
+        </h2>
+
+        <div class="flex flex-col gap-3">
+          <div
+            *ngFor="let log of recentLogs"
+            class="card py-4 px-5 flex items-start gap-3
+                   hover:shadow-card-hover transition-shadow
+                   cursor-pointer group">
+            <!-- Barre colorée gauche -->
+            <div class="w-1 self-stretch rounded-full bg-primary-500
+                        shrink-0"></div>
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-text-heading text-sm
+                        group-hover:text-primary-500 transition-colors
+                        truncate">
+                {{ log.title }}
+              </p>
+              <p class="text-text-muted text-xs mt-0.5">
+                {{ log.date }} · {{ log.duration }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA Rapport recruteur -->
+      <div class="card border border-primary-100 bg-primary-50 mt-2">
+        <div class="flex items-start gap-4">
+          <!-- Icône -->
+          <div class="w-10 h-10 rounded-xl bg-white shadow-card
+                      flex items-center justify-center text-xl shrink-0">
+            📄
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold text-text-heading text-sm mb-1">
+              Rapport recruteur
+            </p>
+            <p class="text-text-muted text-xs mb-3 leading-relaxed">
+              Génère un PDF synthétique de tes apprentissages
+              pour mettre en valeur ta progression.
+            </p>
+            <button class="btn-primary text-sm px-5 py-2.5">
+              Générer mon PDF
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Colonne droite (1/3) -->
+    <div class="flex flex-col gap-4">
+
+      <!-- Graphique activité 7 jours -->
+      <div class="card">
+        <p class="font-semibold text-text-heading text-sm mb-4">
+          Activité — 7 jours
+        </p>
+        <!-- Barres SVG inline -->
+        <div class="flex items-end justify-between gap-1 h-24 mb-2">
+          <div
+            *ngFor="let day of activityDays"
+            class="flex flex-col items-center gap-1 flex-1">
+            <div
+              class="w-full rounded-t-md bg-primary-400
+                     hover:bg-primary-500 transition-colors
+                     cursor-pointer"
+              [style.height.px]="day.height">
+            </div>
+          </div>
+        </div>
+        <!-- Labels jours -->
+        <div class="flex justify-between gap-1">
+          <span
+            *ngFor="let day of activityDays"
+            class="flex-1 text-center text-xs text-text-muted">
+            {{ day.day }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Top catégories -->
+      <div class="card">
+        <p class="font-semibold text-text-heading text-sm mb-4">
+          Top catégories
+        </p>
+        <div class="flex flex-col gap-3">
+          <div *ngFor="let cat of topCategories">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs text-text-body font-medium">
+                {{ cat.name }}
+              </span>
+              <span class="text-xs text-text-muted">
+                {{ cat.percentage }}%
+              </span>
+            </div>
+            <!-- Barre de progression -->
+            <div class="h-2 bg-bg-hover rounded-full overflow-hidden">
+              <div
+                class="h-full rounded-full transition-all duration-700"
+                [ngClass]="cat.color"
+                [style.width.%]="cat.percentage">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Derniers rapports -->
+      <div class="card">
+        <p class="font-semibold text-text-heading text-sm mb-4">
+          Derniers rapports
+        </p>
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="text-base">📋</span>
+              <div>
+                <p class="text-xs font-medium text-text-heading">
+                  22 avr. 2026
+                </p>
+                <p class="text-xs text-text-muted">30 jours</p>
+              </div>
+            </div>
+            <button class="text-xs text-primary-500 hover:text-primary-600
+                           font-medium flex items-center gap-1">
+              ↓ Télécharger
+            </button>
+          </div>
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="text-base">📋</span>
+              <div>
+                <p class="text-xs font-medium text-text-heading">
+                  01 avr. 2026
+                </p>
+                <p class="text-xs text-text-muted">7 jours</p>
+              </div>
+            </div>
+            <button class="text-xs text-primary-500 hover:text-primary-600
+                           font-medium flex items-center gap-1">
+              ↓ Télécharger
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
