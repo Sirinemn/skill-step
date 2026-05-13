@@ -4,24 +4,30 @@ import { authGuard } from '../../core/guards/auth.guard';
 
 export const LEARNING_LOG_ROUTES: Routes = [
   {
-    // /journal — liste de tous les logs
     path: '',
-    title: 'Journal',
     canActivate: [authGuard],
-    
-  },
-  {
-    // /journal/new — formulaire création
-    path: 'new',
-    title: 'New Log',
-    canActivate: [authGuard],
-    
-  },
-  {
-    // /journal/:id/edit — formulaire édition
-    path: ':id/edit',
-    title: 'Edit Log',
-    canActivate: [authGuard],
-    
+    loadComponent: () =>
+      import('../../layouts/main-layout/main-layout.component')
+        .then(m => m.MainLayoutComponent),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/journal/journal.component')
+            .then(m => m.JournalComponent),
+      },
+      {
+        path: 'new',
+        loadComponent: () =>
+          import('./pages/log-form/log-form.component')
+            .then(m => m.LogFormComponent),
+      },
+      {
+        path: ':id/edit',
+        loadComponent: () =>
+          import('./pages/log-form/log-form.component')
+            .then(m => m.LogFormComponent),
+      },
+    ]
   },
 ];
