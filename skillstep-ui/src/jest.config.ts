@@ -23,6 +23,11 @@ const config: Config = {
     '^@features/(.*)$': '<rootDir>/src/app/features/$1',
     '^@shared/(.*)$':   '<rootDir>/src/app/shared/$1',
   },
+  coverageThreshold: {
+    global: {
+      statements: 80
+    },
+  },
 
   // Fichiers à tester
   testMatch: ['**/*.spec.ts'],
