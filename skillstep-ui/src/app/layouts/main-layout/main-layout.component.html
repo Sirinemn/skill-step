@@ -1,11 +1,46 @@
-<div class="flex min-h-screen bg-bg-base">
+ <div class="flex min-h-screen bg-bg-base">
 
-      <!-- Sidebar fixe à gauche -->
+    <!-- Sidebar — masquée sur mobile, visible md+ -->
+    <div class="hidden md:block">
       <app-sidebar></app-sidebar>
-
-      <!-- Contenu principal -->
-      <main class="flex-1 overflow-y-auto">
-        <router-outlet></router-outlet>
-      </main>
-
     </div>
+
+    <!-- Contenu principal -->
+    <main class="flex-1 min-w-0 overflow-y-auto">
+
+      <!-- Barre mobile (hamburger) — visible uniquement sur mobile -->
+      <div class="md:hidden flex items-center justify-between
+                  px-4 py-3 bg-bg-surface border-b border-border-soft
+                  sticky top-0 z-40">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-primary-500
+                      flex items-center justify-center
+                      text-white text-sm font-bold">S</div>
+          <span class="font-bold text-text-heading">Skill-Step</span>
+        </div>
+        <button
+          (click)="sidebarOpen = !sidebarOpen"
+          class="p-2 rounded-lg hover:bg-bg-hover">
+          ☰
+        </button>
+      </div>
+
+      <!-- Sidebar mobile (drawer) -->
+      <div
+        *ngIf="sidebarOpen"
+        class="md:hidden fixed inset-0 z-50 flex">
+        <!-- Overlay sombre -->
+        <div
+          class="absolute inset-0 bg-black bg-opacity-40"
+          (click)="sidebarOpen = false">
+        </div>
+        <!-- Drawer -->
+        <div class="relative z-10">
+          <app-sidebar (click)="sidebarOpen = false"></app-sidebar>
+        </div>
+      </div>
+
+      <router-outlet></router-outlet>
+
+    </main>
+</div>
