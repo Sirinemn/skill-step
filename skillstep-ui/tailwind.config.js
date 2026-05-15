@@ -4,6 +4,9 @@ module.exports = {
   // Tailwind scanne ces fichiers pour détecter les classes utilisées.
   // Seules les classes trouvées ici seront incluses dans le CSS final.
   // Un fichier non listé = ses classes Tailwind seront supprimées du bundle.
+  // "class" = on contrôle le dark mode via une classe CSS
+  // (au lieu de "media" qui suivrait le système sans contrôle)
+  darkMode: 'class',
   content: [
     "./src/**/*.{html,ts}"
   ],
