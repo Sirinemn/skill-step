@@ -28,6 +28,14 @@
   --color-border:        #E5E7EB;
   --transition-base:     all 0.2s ease;
 }
+.dark {
+  --color-bg-base:      #0F1117;
+  --color-bg-surface:   #1A1D27;
+  --color-text-heading: #F1F1F5;
+  --color-text-body:    #A0A3B1;
+  --color-text-muted:   #6B6F80;
+  --color-border:       #2A2D3E;
+}
 
 /* stylelint-disable at-rule-no-unknown */
 // ─────────────────────────────────────────────────────────
