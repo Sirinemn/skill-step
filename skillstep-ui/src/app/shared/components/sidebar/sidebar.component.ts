@@ -3,6 +3,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { getDisplayName } from '../../../core/models/user.model';
 import { RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { ThemeService } from '../../../core/services/theme.service';
 
 interface NavItem {
   label: string;
@@ -32,8 +33,16 @@ export class SidebarComponent {
     return u ? getDisplayName(u) : '';
   });
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService,
+    private readonly themeService: ThemeService
+  ) {}
 
+  readonly isDark$ = computed(() => this.themeService.isDark$());
+
+  toggleTheme(): void {
+    this.themeService.toggle();
+  }
+  
   onLogout(): void {
     this.authService.logout();
   }

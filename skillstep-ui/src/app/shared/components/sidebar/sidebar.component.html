@@ -43,6 +43,29 @@
       </span>
     </div>
 
+    <!-- Toggle Dark / Light Mode -->
+    <div class="flex items-center justify-between px-3 mb-3">
+      <span class="text-xs text-text-muted">
+        {{ isDark$() ? '🌙 Sombre' : '☀️ Clair' }}
+      </span>
+
+      <!-- Switch toggle -->
+      <button
+        (click)="toggleTheme()"
+        class="relative w-10 h-5 rounded-full transition-colors duration-300 focus:outline-none"
+        [class.bg-primary-500]="isDark$()"
+        [class.bg-gray-200]="!isDark$()"
+        [attr.aria-label]="isDark$() ? 'Passer en mode clair' : 'Passer en mode sombre'">
+        <!-- Pastille qui glisse -->
+        <span
+          class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full
+                shadow transition-transform duration-300"
+          [class.translate-x-5]="isDark$()"
+          [class.translate-x-0]="!isDark$()">
+        </span>
+      </button>
+    </div>
+
     <!-- Bouton déconnexion -->
     <button
       (click)="onLogout()"
