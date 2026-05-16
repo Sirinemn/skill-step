@@ -4,12 +4,7 @@ import { getDisplayName } from '../../../core/models/user.model';
 import { RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ThemeService } from '../../../core/services/theme.service';
-
-interface NavItem {
-  label: string;
-  route: string;
-  icon:  string;
-}
+import { NavItem } from '../../../core/models/nav-item.model';
 
 @Component({
   selector: 'app-sidebar',
