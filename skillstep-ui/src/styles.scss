@@ -29,12 +29,27 @@
   --transition-base:     all 0.2s ease;
 }
 .dark {
-  --color-bg-base:      #0F1117;
-  --color-bg-surface:   #1A1D27;
-  --color-text-heading: #F1F1F5;
-  --color-text-body:    #A0A3B1;
-  --color-text-muted:   #6B6F80;
+  // Fonds
+  --color-bg-base:      #0F1117;   // fond général très sombre
+  --color-bg-surface:   #1A1D27;   // fond cards/sidebar
+  --color-bg-hover:     #252836;   // survol éléments
+
+  // Textes
+  --color-text-heading: #F1F1F5;   // titres clairs
+  --color-text-body:    #A0A3B1;   // corps de texte
+  --color-text-muted:   #6B6F80;   // texte secondaire
+
+  // Bordures
   --color-border:       #2A2D3E;
+}
+// ──────────────────────────────────────────────
+// Transition douce entre les thèmes
+// Appliquée à tous les éléments
+// ──────────────────────────────────────────────
+*, *::before, *::after {
+  transition: background-color 0.2s ease,
+              border-color 0.2s ease,
+              color 0.15s ease;
 }
 
 /* stylelint-disable at-rule-no-unknown */
