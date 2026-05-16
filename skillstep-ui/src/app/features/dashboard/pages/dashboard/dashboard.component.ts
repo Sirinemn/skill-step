@@ -2,28 +2,7 @@ import { Component, computed } from '@angular/core';
 import { getDisplayName } from '../../../../core/models/user.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
-
-interface KpiCard {
-  value:   string;
-  label:   string;
-  color:   string;
-  bgLight: string;
-  bgDark:  string;
-  borderLight: string;
-  borderDark:  string;
-}
-
-interface RecentLog {
-  title:    string;
-  date:     string;
-  duration: string;
-}
-
-interface TopCategory {
-  name:       string;
-  percentage: number;
-  color:      string;
-}
+import { ActivityDay, KpiCard, RecentLog, TopCategory } from '../../../../core/models/dashboard.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -96,7 +75,7 @@ export class DashboardComponent {
   ];
 
   // Activité 7 jours — hauteurs des barres en px (mockées)
-  readonly activityDays = [
+  readonly activityDays: ActivityDay[] = [
     { day: 'L', height: 40 },
     { day: 'M', height: 65 },
     { day: 'M', height: 30 },
