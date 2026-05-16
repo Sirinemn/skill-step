@@ -144,16 +144,21 @@ html, body {
   // ── Navigation sidebar ───────────────────────────────
 
   .nav-item {
-    @apply flex items-center gap-3
-           px-4 py-2.5 rounded-xl
-           text-text-body font-medium text-sm
-           hover:bg-primary-50 hover:text-primary-500
-           transition-all duration-150
-           cursor-pointer;
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl
+             text-sm font-medium cursor-pointer
+             transition-all duration-150
+             text-text-body          dark:text-gray-400
+             hover:bg-primary-50     dark:hover:bg-gray-800
+             hover:text-primary-500  dark:hover:text-primary-400;
+  }
+  // Lien actif sidebar — light et dark
+  a.active {
+    @apply bg-primary-50 text-primary-500 font-semibold;
+  }
 
-    &.active {
-      @apply bg-primary-50 text-primary-500 font-semibold;
-    }
+  // Dark mode — lien actif
+  .dark a.active {
+    @apply bg-gray-800 text-primary-400;
   }
 
   // ── Formulaires ──────────────────────────────────────
