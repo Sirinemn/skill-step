@@ -1,74 +1,75 @@
-<aside class="w-44 min-h-screen bg-bg-surface border-r border-border-soft
-              flex flex-col py-5 px-3 shrink-0">
-
-  <!-- Logo -->
+<!-- src/app/shared/components/sidebar/sidebar.component.html -->
+<aside
+  class="w-44 min-h-screen flex flex-col py-5 px-3 shrink-0 bg-bg-surface dark:bg-gray-900 border-r border-border-soft dark:border-gray-800"
+>
+   <!-- Logo -->
   <div class="flex items-center gap-2 px-3 mb-8">
     <span class="text-2xl">🚀</span>
-    <span class="font-bold text-text-heading text-base">Skill-Step</span>
+    <span class="font-bold text-base
+                 text-text-heading dark:text-gray-100">
+      Skill-Step
+    </span>
   </div>
 
-  <!-- Navigation -->
+  <!-- ── Navigation ─────────────────────── -->
   <nav class="flex flex-col gap-1 flex-1">
-    <a
     
-      *ngFor="let item of navItems"
+    <a *ngFor="let item of navItems"
       [routerLink]="item.route"
       routerLinkActive="active"
-      class="nav-item">
-      <span class="text-base leading-none">{{ item.icon }}</span>
-      <span>{{ item.label }}</span>
+      class="nav-item"
+      [routerLinkActiveOptions]="{ exact: true }">
+
+      <span class="text-base leading-none shrink-0">{{ item.icon }}</span>
+      <span class="truncate">{{ item.label }}</span>
+
     </a>
   </nav>
 
-    <!-- ─── Zone bas ──────────────────────────── -->
-  <div class="border-t border-border-soft dark:border-gray-800 pt-4 mt-4
-              flex flex-col gap-2">
-
+  <!-- ── Zone bas ───────────────────────── -->
+  <div
+    class="border-t pt-4 mt-4 flex flex-col gap-2 border-border-soft dark:border-gray-800"
+  >
     <!-- Toggle Dark / Light -->
     <div class="flex items-center justify-between px-3 py-1">
-
-      <!-- Label avec icône qui change -->
-      <span class="text-xs text-text-muted select-none">
-        {{ isDark$() ? '🌙 Sombre' : '☀️ Clair' }}
+      <span class="text-xs select-none text-text-muted dark:text-gray-500">
+        {{ isDark$() ? "🌙 Sombre" : "☀️ Clair" }}
       </span>
 
-      <!-- Switch animé -->
       <button
         (click)="toggleTheme()"
-        [attr.aria-label]="isDark$() ? 'Passer en mode clair' : 'Passer en mode sombre'"
-        class="relative w-10 h-5 rounded-full
-               focus:outline-none focus:ring-2 focus:ring-primary-500
-               focus:ring-offset-1 transition-colors duration-300"
+        [attr.aria-label]="isDark$() ? 'Mode clair' : 'Mode sombre'"
+        class="relative w-10 h-5 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 transition-colors duration-300"
         [class.bg-primary-500]="isDark$()"
-        [class.bg-gray-300]="!isDark$()">
-
-        <!-- Pastille blanche qui glisse -->
+        [class.bg-gray-300]="!isDark$()"
+      >
         <span
-          class="absolute top-0.5 w-4 h-4 bg-white rounded-full
-                 shadow-sm transition-all duration-300 ease-in-out"
+          class="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-all duration-300 ease-in-out"
           [class.left-0.5]="!isDark$()"
-          [class.left-5]="isDark$()">
+          [class.left-5]="isDark$()"
+        >
         </span>
-
       </button>
     </div>
 
-    <!-- Avatar + nom utilisateur -->
+    <!-- Avatar + nom -->
     <div class="flex items-center gap-2 px-3 py-1" *ngIf="user$()">
       <img
         *ngIf="user$()?.avatarUrl; else initials"
         [src]="user$()!.avatarUrl!"
         [alt]="displayName$()"
-        class="w-7 h-7 rounded-full object-cover"
+        class="w-7 h-7 rounded-full object-cover ring-2 ring-primary-100 dark:ring-primary-900"
       />
       <ng-template #initials>
-        <div class="w-7 h-7 rounded-full bg-primary-100
-                    flex items-center justify-center
-                    text-primary-500 text-xs font-bold">
+        <div
+          class="w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-xs font-bold bg-primary-100 dark:bg-primary-900 text-primary-500 dark:text-primary-300"
+        >
           {{ displayName$().charAt(0).toUpperCase() }}
         </div>
       </ng-template>
-      <span class="text-xs text-text-muted truncate max-w-24">
+      <span
+        class="text-xs truncate max-w-24 text-text-muted dark:text-gray-400"
+      >
         {{ displayName$() }}
       </span>
     </div>
@@ -76,12 +77,10 @@
     <!-- Déconnexion -->
     <button
       (click)="onLogout()"
-      class="nav-item w-full text-red-500
-             hover:bg-red-50 hover:text-red-600
-             dark:hover:bg-red-950 dark:text-red-400">
+      class="flex items-center gap-3 px-3 py-2.5 rounded-xl w-full text-sm font-medium cursor-pointer transition-all duration-150 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950"
+    >
       <span>🚪</span>
       <span>Déconnexion</span>
     </button>
-
   </div>
 </aside>
