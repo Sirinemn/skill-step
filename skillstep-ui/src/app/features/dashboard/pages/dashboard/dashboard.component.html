@@ -26,21 +26,15 @@
     <div
       *ngFor="let kpi of kpiCards"
       class="rounded-2xl border p-4 md:p-5
-             border-border-card dark:border-gray-700
-             transition-shadow hover:shadow-card-hover"
-      [ngClass]="kpi.bgColor">
+            transition-shadow hover:shadow-card-hover"
+      [ngClass]="[kpi.bgLight, kpi.bgDark, kpi.borderLight, kpi.borderDark]">
 
-      <!-- Valeur principale -->
-      <p class="text-xl md:text-2xl font-bold mb-1"
-         [ngClass]="kpi.color">
+      <p class="text-xl md:text-2xl font-bold mb-1" [ngClass]="kpi.color">
         {{ kpi.value }}
       </p>
-
-      <!-- Label -->
       <p class="text-text-muted dark:text-gray-400 text-sm">
         {{ kpi.label }}
       </p>
-
     </div>
   </div>
 

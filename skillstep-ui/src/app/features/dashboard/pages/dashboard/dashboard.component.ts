@@ -7,7 +7,10 @@ interface KpiCard {
   value:   string;
   label:   string;
   color:   string;
-  bgColor: string;
+  bgLight: string;
+  bgDark:  string;
+  borderLight: string;
+  borderDark:  string;
 }
 
 interface RecentLog {
@@ -39,11 +42,44 @@ export class DashboardComponent {
   });
 
    // Données mockées — seront remplacées par l'API au Sprint 3
+  // dashboard.component.ts — remplacer le tableau kpiCards
   readonly kpiCards: KpiCard[] = [
-    { value: '84',        label: 'Total logs',       color: 'text-primary-500', bgColor: 'bg-primary-50'  },
-    { value: '1 260 min', label: 'Temps appris',     color: 'text-teal-600',    bgColor: 'bg-teal-50'     },
-    { value: '12',        label: 'Catégories actives',color: 'text-orange-500', bgColor: 'bg-orange-50'   },
-    { value: '6 entrées', label: 'Cette semaine',    color: 'text-blue-600',    bgColor: 'bg-blue-50'     },
+    {
+      value:        '84',
+      label:        'Total logs',
+      color:        'text-primary-500',
+      bgLight:      'bg-primary-50',
+      bgDark:       'dark:bg-primary-950',
+      borderLight:  'border-primary-100',
+      borderDark:   'dark:border-primary-900',
+    },
+    {
+      value:        '1 260 min',
+      label:        'Temps appris',
+      color:        'text-teal-600',
+      bgLight:      'bg-teal-50',
+      bgDark:       'dark:bg-teal-950',
+      borderLight:  'border-teal-100',
+      borderDark:   'dark:border-teal-900',
+    },
+    {
+      value:        '12',
+      label:        'Catégories actives',
+      color:        'text-orange-500',
+      bgLight:      'bg-orange-50',
+      bgDark:       'dark:bg-orange-950',
+      borderLight:  'border-orange-100',
+      borderDark:   'dark:border-orange-900',
+    },
+    {
+      value:        '6 entrées',
+      label:        'Cette semaine',
+      color:        'text-blue-600',
+      bgLight:      'bg-blue-50',
+      bgDark:       'dark:bg-blue-950',
+      borderLight:  'border-blue-100',
+      borderDark:   'dark:border-blue-900',
+    },
   ];
 
   readonly recentLogs: RecentLog[] = [
