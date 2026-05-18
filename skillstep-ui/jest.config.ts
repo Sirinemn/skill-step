@@ -1,12 +1,10 @@
-// jest.config.ts
 import type { Config } from 'jest';
 
 const config: Config = {
   preset: 'jest-preset-angular',
-  setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
+  setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
   testEnvironment: 'jsdom',
 
-  // Transforme les fichiers TypeScript et HTML Angular
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',
@@ -17,28 +15,23 @@ const config: Config = {
     ],
   },
 
-  // Alias de chemins — correspondent à tsconfig.json
+  moduleFileExtensions: ['ts', 'html', 'js', 'json', 'mjs'],
+
   moduleNameMapper: {
-    '^@core/(.*)$':     '<rootDir>/src/app/core/$1',
+    '^@core/(.*)$': '<rootDir>/src/app/core/$1',
     '^@features/(.*)$': '<rootDir>/src/app/features/$1',
-    '^@shared/(.*)$':   '<rootDir>/src/app/shared/$1',
-  },
-  coverageThreshold: {
-    global: {
-      statements: 80
-    },
+    '^@shared/(.*)$': '<rootDir>/src/app/shared/$1',
   },
 
-  // Fichiers à tester
   testMatch: ['**/*.spec.ts'],
 
-  // Couverture de code
   collectCoverageFrom: [
     'src/app/**/*.ts',
-    '!src/app/**/*.routes.ts',  // pas les fichiers de routes
-    '!src/app/**/*.model.ts',   // pas les modèles (interfaces)
+    '!src/app/**/*.routes.ts',
+    '!src/app/**/*.model.ts',
     '!src/main.ts',
   ],
+
   coverageReporters: ['html', 'text-summary'],
 };
 
