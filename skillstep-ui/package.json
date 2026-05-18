@@ -36,6 +36,7 @@
     "jest-preset-angular": "^16.1.5",
     "postcss": "^8.5.14",
     "tailwindcss": "^3.4.19",
+    "ts-node": "^10.9.2",
     "typescript": "~5.7.2"
   }
 }
