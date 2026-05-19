@@ -1,1 +1,57 @@
-<p>features-page works!</p>
+<div class="section container-app">
+
+  <!-- En-tête -->
+  <div class="text-center mb-16">
+    <span class="badge-primary mb-4 inline-flex">✨ Fonctionnalités</span>
+    <h1 class="text-4xl font-bold text-text-heading mb-4">
+      Tout ce qu'il vous faut pour progresser
+    </h1>
+    <p class="text-text-muted text-lg max-w-xl mx-auto">
+      Skill-Step est conçu pour s'adapter à tous les domaines
+      d'apprentissage — développement, design, langues, musique et plus encore.
+    </p>
+  </div>
+
+  <!-- Grid des features détaillées -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+    <div *ngFor="let f of features"
+         class="card-hover group">
+
+      <!-- Icône + titre -->
+      <div class="flex items-start gap-4 mb-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center
+                    text-2xl shrink-0 group-hover:scale-110
+                    transition-transform duration-200"
+             [ngClass]="f.iconBg">
+          {{ f.icon }}
+        </div>
+        <div>
+          <h3 class="font-bold text-text-heading mb-1">{{ f.title }}</h3>
+          <p class="text-text-muted text-sm">{{ f.description }}</p>
+        </div>
+      </div>
+
+      <!-- Liste des détails -->
+      <ul class="flex flex-col gap-2 pl-2">
+        <li *ngFor="let detail of f.details"
+            class="flex items-center gap-2 text-sm text-text-body">
+          <span class="w-4 h-4 rounded-full bg-primary-100
+                       text-primary-500 flex items-center justify-center
+                       text-xs shrink-0">
+            ✓
+          </span>
+          {{ detail }}
+        </li>
+      </ul>
+
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="text-center">
+    <button (click)="onLogin()" class="btn-primary text-base px-10 py-4">
+      Commencer gratuitement
+    </button>
+  </div>
+
+</div>
