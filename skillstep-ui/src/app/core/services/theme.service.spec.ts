@@ -1,13 +1,18 @@
-import { TestBed } from '@angular/core/testing';
+import {
+  fakeAsync,
+  flushMicrotasks,
+  TestBed,
+  tick,
+} from '@angular/core/testing';
 import { ThemeService } from './theme.service';
 
 describe('ThemeService', () => {
   let service: ThemeService;
 
   beforeEach(() => {
-
     // Reset localStorage
     localStorage.clear();
+    document.documentElement.classList.remove('dark');
 
     // Mock matchMedia
     Object.defineProperty(window, 'matchMedia', {
@@ -26,6 +31,7 @@ describe('ThemeService', () => {
 
     TestBed.configureTestingModule({});
     service = TestBed.inject(ThemeService);
+  
   });
 
   afterEach(() => {
@@ -42,8 +48,7 @@ describe('ThemeService', () => {
   });
 
   it('should initialize with saved theme from localStorage', () => {
-
-    localStorage.setItem('skillstep_theme', 'dark');
+    localStorage.setItem(service.storageKey, 'dark');
 
     TestBed.resetTestingModule();
 
@@ -78,9 +83,9 @@ describe('ThemeService', () => {
     expect(service.isDark$()).toBe(true);
   });
 
-  it('should add dark class to html element', () => {
-    service.setTheme('dark');
-
+  it('doit ajouter la classe dark sur <html> quand dark mode activé', () => {
+    service.toggle(); // → dark
+    TestBed.flushEffects(); //Force l'exécution de l'effect qui met à jour la classe
     expect(document.documentElement.classList.contains('dark')).toBe(true);
   });
 
@@ -92,14 +97,13 @@ describe('ThemeService', () => {
     expect(document.documentElement.classList.contains('dark')).toBe(false);
   });
 
-  it('should save theme to localStorage', () => {
-    service.setTheme('dark');
-    
-    expect(localStorage.getItem('skillstep_theme')).toBe('dark');
+ it('doit sauvegarder le thème dans localStorage', () => {
+    service.toggle(); // → dark
+    TestBed.flushEffects(); // ✅ Force l'exécution de l'effect
+    expect(localStorage.getItem(service.storageKey)).toBe('dark');
   });
 
   it('should use system dark theme if no saved theme exists', () => {
-
     // Mock dark system preference
     window.matchMedia = jest.fn().mockImplementation(() => ({
       matches: true,
