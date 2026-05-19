@@ -1,1 +1,229 @@
-<p>profile works!</p>
+<!-- src/app/features/profile/pages/profile/profile.component.html -->
+<div class="p-4 md:p-8 max-w-3xl">
+
+  <!-- En-tête -->
+  <div class="mb-8">
+    <h1 class="text-xl md:text-2xl font-bold
+               text-text-heading dark:text-gray-100 mb-1">
+      Mon profil
+    </h1>
+    <p class="text-text-muted dark:text-gray-400 text-sm">
+      Ces informations apparaîtront dans vos rapports PDF.
+    </p>
+  </div>
+
+  <!-- Carte identité -->
+  <div class="rounded-2xl border p-6 mb-6
+              bg-bg-surface dark:bg-gray-800
+              border-border-card dark:border-gray-700">
+
+    <div class="flex items-center gap-5">
+
+      <!-- Avatar -->
+      <div class="relative shrink-0">
+        <img
+          *ngIf="user$()?.avatarUrl; else initialsAvatar"
+          [src]="user$()!.avatarUrl!"
+          [alt]="displayName$()"
+          class="w-20 h-20 rounded-2xl object-cover
+                 ring-4 ring-primary-100 dark:ring-primary-900"
+        />
+        <ng-template #initialsAvatar>
+          <div class="w-20 h-20 rounded-2xl
+                      flex items-center justify-center
+                      text-3xl font-bold
+                      bg-primary-100 dark:bg-primary-900
+                      text-primary-500 dark:text-primary-300">
+            {{ displayName$().charAt(0).toUpperCase() }}
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Infos fixes -->
+      <div class="flex-1 min-w-0">
+        <h2 class="text-lg font-bold
+                   text-text-heading dark:text-gray-100 mb-0.5">
+          {{ displayName$() }}
+        </h2>
+        <p class="text-text-muted dark:text-gray-400 text-sm mb-1">
+          {{ user$()?.email }}
+        </p>
+        <span class="badge-primary text-xs">
+          Connecté via Google
+        </span>
+      </div>
+
+      <!-- Bouton éditer -->
+      <button
+        *ngIf="!isEditing()"
+        (click)="startEditing()"
+        class="btn-secondary text-sm px-4 py-2 shrink-0">
+        ✏️ Modifier
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Message succès -->
+  <div *ngIf="saveSuccess()"
+       class="flex items-center gap-2 p-4 rounded-xl mb-4
+              bg-green-50 dark:bg-green-950
+              border border-green-200 dark:border-green-800
+              text-green-700 dark:text-green-300 text-sm">
+    ✅ Profil mis à jour avec succès !
+  </div>
+
+  <!-- Message erreur -->
+  <div *ngIf="saveError()"
+       class="flex items-center gap-2 p-4 rounded-xl mb-4
+              bg-red-50 dark:bg-red-950
+              border border-red-200 dark:border-red-800
+              text-red-700 dark:text-red-300 text-sm">
+    ❌ {{ saveError() }}
+  </div>
+
+  <!-- Formulaire profil -->
+  <form [formGroup]="profileForm" (ngSubmit)="onSave()">
+    <div class="rounded-2xl border p-6
+                bg-bg-surface dark:bg-gray-800
+                border-border-card dark:border-gray-700">
+
+      <h3 class="font-semibold text-text-heading dark:text-gray-100
+                 mb-6 pb-4 border-b border-border-soft dark:border-gray-700">
+        Informations professionnelles
+      </h3>
+
+      <div class="flex flex-col gap-5">
+
+        <!-- Poste visé -->
+        <div>
+          <label class="label dark:text-gray-300">
+            Poste visé / Domaine
+          </label>
+          <input
+            type="text"
+            formControlName="targetRole"
+            placeholder="Ex: Développeur Full-Stack, Designer UX, Chef de projet..."
+            class="input-field dark:bg-gray-700 dark:border-gray-600
+                   dark:text-gray-100 dark:placeholder-gray-500"
+            [class.opacity-60]="!isEditing()"
+            [attr.readonly]="!isEditing() ? true : null"
+          />
+          <p *ngIf="profileForm.get('targetRole')?.errors?.['maxlength']"
+             class="text-red-500 text-xs mt-1">
+            Maximum 150 caractères
+          </p>
+        </div>
+
+        <!-- Titre / Headline -->
+        <div>
+          <label class="label dark:text-gray-300">
+            Titre professionnel
+          </label>
+          <input
+            type="text"
+            formControlName="headline"
+            placeholder="Ex: 3 ans d'expérience en développement web"
+            class="input-field dark:bg-gray-700 dark:border-gray-600
+                   dark:text-gray-100 dark:placeholder-gray-500"
+            [class.opacity-60]="!isEditing()"
+            [attr.readonly]="!isEditing() ? true : null"
+          />
+        </div>
+
+        <!-- Bio -->
+        <div>
+          <label class="label dark:text-gray-300">Bio</label>
+          <textarea
+            formControlName="bio"
+            rows="4"
+            placeholder="Décrivez votre parcours, vos objectifs..."
+            class="input-field resize-none
+                   dark:bg-gray-700 dark:border-gray-600
+                   dark:text-gray-100 dark:placeholder-gray-500"
+            [class.opacity-60]="!isEditing()"
+            [attr.readonly]="!isEditing() ? true : null">
+          </textarea>
+          <div class="flex justify-between mt-1">
+            <p *ngIf="profileForm.get('bio')?.errors?.['maxlength']"
+               class="text-red-500 text-xs">
+              Maximum 2000 caractères
+            </p>
+            <p class="text-xs text-text-muted dark:text-gray-500 ml-auto">
+              {{ profileForm.get('bio')?.value?.length ?? 0 }} / 2000
+            </p>
+          </div>
+        </div>
+
+        <!-- LinkedIn -->
+        <div>
+          <label class="label dark:text-gray-300">
+            LinkedIn
+          </label>
+          <input
+            type="url"
+            formControlName="linkedinUrl"
+            placeholder="https://linkedin.com/in/votre-profil"
+            class="input-field dark:bg-gray-700 dark:border-gray-600
+                   dark:text-gray-100 dark:placeholder-gray-500"
+            [class.opacity-60]="!isEditing()"
+            [attr.readonly]="!isEditing() ? true : null"
+          />
+          <p *ngIf="profileForm.get('linkedinUrl')?.errors?.['pattern']"
+             class="text-red-500 text-xs mt-1">
+            L'URL doit commencer par https://
+          </p>
+        </div>
+
+        <!-- GitHub -->
+        <div>
+          <label class="label dark:text-gray-300">
+            GitHub / Portfolio
+          </label>
+          <input
+            type="url"
+            formControlName="githubUrl"
+            placeholder="https://github.com/votre-username"
+            class="input-field dark:bg-gray-700 dark:border-gray-600
+                   dark:text-gray-100 dark:placeholder-gray-500"
+            [class.opacity-60]="!isEditing()"
+            [attr.readonly]="!isEditing() ? true : null"
+          />
+          <p *ngIf="profileForm.get('githubUrl')?.errors?.['pattern']"
+             class="text-red-500 text-xs mt-1">
+            L'URL doit commencer par https://
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Boutons actions — visibles uniquement en mode édition -->
+      <div *ngIf="isEditing()"
+           class="flex gap-3 mt-6 pt-5
+                  border-t border-border-soft dark:border-gray-700">
+        <button
+          type="submit"
+          [disabled]="profileForm.invalid || isSaving()"
+          class="btn-primary text-sm px-6 py-2.5
+                 disabled:opacity-50 disabled:cursor-not-allowed">
+          <span *ngIf="!isSaving()">💾 Enregistrer</span>
+          <span *ngIf="isSaving()" class="flex items-center gap-2">
+            <span class="w-4 h-4 border-2 border-white border-t-transparent
+                         rounded-full animate-spin"></span>
+            Enregistrement...
+          </span>
+        </button>
+
+        <button
+          type="button"
+          (click)="cancelEditing()"
+          [disabled]="isSaving()"
+          class="btn-secondary text-sm px-6 py-2.5">
+          Annuler
+        </button>
+      </div>
+
+    </div>
+  </form>
+
+</div>
