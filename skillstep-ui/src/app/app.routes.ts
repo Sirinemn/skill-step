@@ -19,30 +19,6 @@ export const routes: Routes = [
     redirectTo: 'auth',
     pathMatch: 'full',
   },
-  {
-    path: 'fonctionnalites',
-    loadComponent: () =>
-      import('./features/auth/pages/features-page/features-page.component')
-        .then(m => m.FeaturesPageComponent),
-  },
-  {
-    path: 'a-propos',
-    loadComponent: () =>
-      import('./features/auth/pages/about/about.component')
-        .then(m => m.AboutComponent),
-  },
-  {
-    path: 'confidentialite',
-     loadComponent: () =>
-      import('./features/auth/pages/privacy/privacy.component')
-        .then(m => m.PrivacyComponent),
-  },
-  {
-    path: 'conditions',
-    loadComponent: () =>
-      import('./features/auth/pages/terms/terms.component')
-        .then(m => m.TermsComponent),
-  },
 
   // ── Dashboard ──────────────────────────────────────────
   {

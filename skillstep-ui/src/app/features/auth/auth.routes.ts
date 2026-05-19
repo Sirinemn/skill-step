@@ -24,4 +24,28 @@ export const AUTH_ROUTES: Routes = [
     title: 'Callback',
     component: CallbackComponent
   },
+    {
+    path: 'fonctionnalites',
+    loadComponent: () =>
+      import('./pages/features-page/features-page.component')
+        .then(m => m.FeaturesPageComponent),
+  },
+  {
+    path: 'a-propos',
+    loadComponent: () =>
+      import('./pages/about/about.component')
+        .then(m => m.AboutComponent),
+  },
+  {
+    path: 'confidentialite',
+     loadComponent: () =>
+      import('./pages/privacy/privacy.component')
+        .then(m => m.PrivacyComponent),
+  },
+  {
+    path: 'conditions',
+    loadComponent: () =>
+      import('./pages/terms/terms.component')
+        .then(m => m.TermsComponent),
+  },
 ];
