@@ -6,6 +6,8 @@ export type Theme = 'light' | 'dark';
 })
 export class ThemeService {
 
+  public readonly storageKey = 'skillstep_theme';
+
   // Signal — état réactif du thème
   // On lit le thème sauvegardé, sinon on suit le système
   private readonly theme$ = signal<Theme>(this.getInitialTheme());
@@ -20,7 +22,7 @@ export class ThemeService {
     effect(() => {
       const isDark = this.isDark$();
       document.documentElement.classList.toggle('dark', isDark);
-      localStorage.setItem('skillstep_theme', this.theme$());
+      localStorage.setItem(this.storageKey, this.theme$());
     });
   }
 
@@ -34,7 +36,7 @@ export class ThemeService {
 
   private getInitialTheme(): Theme {
     // 1. Thème sauvegardé par l'utilisateur
-    const saved = localStorage.getItem('skillstep_theme') as Theme | null;
+    const saved = localStorage.getItem(this.storageKey) as Theme | null;
     if (saved === 'light' || saved === 'dark') return saved;
 
     // 2. Thème système (macOS/Windows/Android)
