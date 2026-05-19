@@ -68,4 +68,8 @@ export class AuthService {
   private saveToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
   }
+
+  setCurrentUser(user: User): void {
+    this.currentUser$.set(user);
+  }
 }
