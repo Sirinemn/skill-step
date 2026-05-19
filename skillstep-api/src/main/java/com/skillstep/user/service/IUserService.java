@@ -1,6 +1,7 @@
 package com.skillstep.user.service;
 
 import com.skillstep.user.domain.User;
+import com.skillstep.user.dto.UpdateProfileRequest;
 
 import java.util.Optional;
 
@@ -22,6 +23,6 @@ public interface IUserService {
     User findById(Long id);
 
     //Met à jour les informations de profil éditables par l'utilisateur.
-    User updateProfile(Long userId, String headline, String bio,
-                       String targetRole, String linkedinUrl, String githubUrl);
+    // Mise à jour partielle du profil
+    User updateProfile(Long userId, UpdateProfileRequest request);
 }

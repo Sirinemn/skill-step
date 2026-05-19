@@ -2,6 +2,8 @@ package com.skillstep.user.service.impl;
 
 import com.skillstep.shared.exception.ResourceNotFoundException;
 import com.skillstep.user.domain.User;
+import com.skillstep.user.dto.UpdateProfileRequest;
+import com.skillstep.user.mapper.UserMapper;
 import com.skillstep.user.repository.UserRepository;
 import com.skillstep.user.service.IUserService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import java.util.Optional;
 public class UserServiceImpl implements IUserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     @Transactional
@@ -43,17 +46,14 @@ public class UserServiceImpl implements IUserService {
     }
     @Override
     @Transactional
-    public User updateProfile(Long userId, String headline, String bio,
-                              String targetRole, String linkedinUrl, String githubUrl) {
+    public User updateProfile(Long userId, UpdateProfileRequest request) {
         User user = findById(userId);
-        user.setHeadline(headline);
-        user.setBio(bio);
-        user.setTargetRole(targetRole);
-        user.setLinkedinUrl(linkedinUrl);
-        user.setGithubUrl(githubUrl);
-        // Pas besoin d'appeler save() explicitement :
-        // l'entité est "managed" dans le contexte JPA, les changements
-        // sont flushés automatiquement en fin de transaction (@Transactional)
+
+        // MapStruct applique uniquement les champs non-null du DTO
+        userMapper.updateUserFromRequest(request, user);
+
+        // Pas besoin de save() explicite — l'entité est "managed"
+        // dans le contexte JPA, le flush est automatique en fin de transaction
         return user;
     }
 
