@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-about',
@@ -7,5 +8,7 @@ import { Component } from '@angular/core';
   styleUrl: './about.component.scss'
 })
 export class AboutComponent {
+  constructor(private readonly authService: AuthService) {}
+  onLogin(): void { this.authService.loginWithGoogle(); }
 
 }
