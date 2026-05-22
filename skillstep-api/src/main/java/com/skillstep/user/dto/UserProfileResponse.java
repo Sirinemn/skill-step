@@ -1,10 +1,12 @@
 package com.skillstep.user.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 @Builder
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserProfileResponse {
 
     private Long id;
