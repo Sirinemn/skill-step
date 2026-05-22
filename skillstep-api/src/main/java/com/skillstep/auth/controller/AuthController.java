@@ -1,6 +1,5 @@
 package com.skillstep.auth.controller;
 
-import com.skillstep.auth.service.OAuthUserService;
 import com.skillstep.shared.exception.ResourceNotFoundException;
 import com.skillstep.user.dto.UserProfileResponse;
 import com.skillstep.user.mapper.UserMapper;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name="Authentication", description = "Authentification et profil courant")
 public class AuthController {
 
-    private final OAuthUserService oAuthUserService;
     private final IUserService userService;
     private final UserMapper userMapper;
 
