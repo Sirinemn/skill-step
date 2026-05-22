@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth.service';
 import { UserService } from '../../../../core/services/user.service';
+import { UpdateProfilePayload } from '../../../../core/models/updateProfilePayload.model';
 
 @Component({
   selector: 'app-profile',
@@ -66,10 +67,12 @@ export class ProfileComponent {
   onSave(): void {
     if (this.profileForm.invalid || this.isSaving()) return;
 
+    // Normalisation avant envoi à l'API
+    const payload = this.buildPayload();
     this.isSaving.set(true);
     this.saveError.set(null);
 
-    this.userService.updateProfile(this.profileForm.value).subscribe({
+    this.userService.updateProfile(payload).subscribe({
       next: () => {
         this.isSaving.set(false);
         this.isEditing.set(false);
@@ -83,6 +86,36 @@ export class ProfileComponent {
         console.error(err);
       },
     });
+  }
+
+  // Construit le payload final normalisé
+  private buildPayload(): UpdateProfilePayload {
+    const v = this.profileForm.value;
+    return {
+      headline:    this.normalizeText(v.headline),
+      bio:         this.normalizeText(v.bio),
+      targetRole:  this.normalizeText(v.targetRole),
+      // URLs : trim uniquement — pas de normalisation des espaces internes
+      // car une URL ne devrait pas en avoir (la validation Pattern le détecte)
+      linkedinUrl: this.normalizeUrl(v.linkedinUrl),
+      githubUrl:   this.normalizeUrl(v.githubUrl),
+    };
+  }
+  // Supprime les espaces début/fin ET remplace les espaces multiples internes par un seul espace
+  private normalizeText(value: string | null): string | null {
+    if (!value) return null;
+    const trimmed = value.trim();
+    // Si la valeur est vide après trim, on renvoie null
+    // → le backend traitera null comme "pas de valeur" (PATCH sémantique)
+    if (trimmed.length === 0) return null;
+    return trimmed.replace(/\s+/g, ' ');
+  }
+
+  // Trim uniquement pour les URLs
+  private normalizeUrl(value: string | null): string | null {
+    if (!value) return null;
+    const trimmed = value.trim();
+    return trimmed.length === 0 ? null : trimmed;
   }
 
 }
