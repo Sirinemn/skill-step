@@ -12,21 +12,23 @@
     </p>
   </div>
 
-  <!-- Carte identité -->
-  <div class="rounded-2xl border p-6 mb-6
+  <!-- Carte identité  -->
+  <div class="rounded-2xl border p-5 mb-6
               bg-bg-surface dark:bg-gray-800
               border-border-card dark:border-gray-700">
 
-    <div class="flex items-center gap-5">
+    <!-- Layout mobile : colonne / desktop : ligne -->
+    <div class="flex flex-col sm:flex-row gap-4">
 
-      <!-- Avatar -->
-      <div class="relative shrink-0">
+      <!-- Avatar centré sur mobile -->
+      <div class="flex justify-center sm:justify-start">
         <img
           *ngIf="user$()?.avatarUrl; else initialsAvatar"
           [src]="user$()!.avatarUrl!"
           [alt]="displayName$()"
           class="w-20 h-20 rounded-2xl object-cover
-                 ring-4 ring-primary-100 dark:ring-primary-900"
+                ring-4 ring-primary-100 dark:ring-primary-900"
+          referrerpolicy="no-referrer"
         />
         <ng-template #initialsAvatar>
           <div class="w-20 h-20 rounded-2xl
@@ -39,28 +41,34 @@
         </ng-template>
       </div>
 
-      <!-- Infos fixes -->
+      <!-- Infos + bouton -->
       <div class="flex-1 min-w-0">
-        <h2 class="text-lg font-bold
-                   text-text-heading dark:text-gray-100 mb-0.5">
-          {{ displayName$() }}
-        </h2>
-        <p class="text-text-muted dark:text-gray-400 text-sm mb-1">
+
+        <!-- Nom + bouton sur la même ligne -->
+        <div class="flex items-start justify-between gap-3 mb-1">
+          <h2 class="text-lg font-bold text-text-heading dark:text-gray-100
+                    break-words">
+            {{ displayName$() }}
+          </h2>
+          <button
+            *ngIf="!isEditing()"
+            (click)="startEditing()"
+            class="btn-secondary text-sm px-3 py-1.5 shrink-0">
+            ✏️ Modifier
+          </button>
+        </div>
+
+        <!-- Email -->
+        <p class="text-text-muted dark:text-gray-400 text-sm mb-2 break-all">
           {{ user$()?.email }}
         </p>
-        <span class="badge-primary text-xs">
-          Connecté via Google
+
+        <!-- Badge -->
+        <span class="badge-primary text-xs inline-flex">
+          🔒 Connecté via Google
         </span>
+
       </div>
-
-      <!-- Bouton éditer -->
-      <button
-        *ngIf="!isEditing()"
-        (click)="startEditing()"
-        class="btn-secondary text-sm px-4 py-2 shrink-0">
-        ✏️ Modifier
-      </button>
-
     </div>
   </div>
 
