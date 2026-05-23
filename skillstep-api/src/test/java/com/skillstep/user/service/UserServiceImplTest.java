@@ -2,6 +2,8 @@ package com.skillstep.user.service;
 
 import com.skillstep.shared.exception.ResourceNotFoundException;
 import com.skillstep.user.domain.User;
+import com.skillstep.user.dto.UpdateProfileRequest;
+import com.skillstep.user.mapper.UserMapper;
 import com.skillstep.user.repository.UserRepository;
 import com.skillstep.user.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +28,9 @@ public class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private UserMapper userMapper;
+
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -34,6 +39,7 @@ public class UserServiceImplTest {
     @BeforeEach
     void Setup() {
          userMock = User.builder()
+                 .id(1L)
                 .email("john@doe.fr")
                 .firstName("John")
                 .lastName("Doe")
@@ -91,5 +97,23 @@ public class UserServiceImplTest {
         assertThatThrownBy(() -> userService.findById(99L))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("99");
+    }
+    @Test
+    @DisplayName("updateProfile — doit mettre à jour le profil de l'utilisateur")
+    void updateProfile_shouldUpdateUserProfile() {
+        // Création d'une requête de mise à jour
+        var request = new UpdateProfileRequest();
+        request.setBio("bio");
+        request.setHeadline("headline");
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(userMock));
+
+        User updatedUser = userService.updateProfile(1L, request);
+
+        verify(userMapper)
+                .updateUserFromRequest(request, updatedUser);
+
+        assertEquals(userMock, updatedUser);
+
     }
 }
