@@ -25,4 +25,6 @@ public interface IUserService {
     //Met à jour les informations de profil éditables par l'utilisateur.
     // Mise à jour partielle du profil
     User updateProfile(Long userId, UpdateProfileRequest request);
+
+    User getReferenceById(Long userId);
 }

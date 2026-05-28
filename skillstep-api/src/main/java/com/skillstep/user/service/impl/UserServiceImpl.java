@@ -61,6 +61,11 @@ public class UserServiceImpl implements IUserService {
         return user;
     }
 
+    @Override
+    public User getReferenceById(Long userId) {
+        return userRepository.getReferenceById(userId);
+    }
+
     // --- méthodes privées ---
     private User syncGoogleFields(User user, String firstName, String lastName, String avatarUrl) {
         user.setFirstName(firstName);
