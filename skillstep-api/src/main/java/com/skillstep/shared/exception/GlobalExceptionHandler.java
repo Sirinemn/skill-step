@@ -76,6 +76,13 @@ public class GlobalExceptionHandler {
                 .body(ApiError.of(405, ErrorCode.VALIDATION_ERROR,
                         "Méthode HTTP non supportée : " + ex.getMethod()));
     }
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ApiError> handleForbidden(ForbiddenException ex) {
+        log.warn("Accès interdit : {}", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(ApiError.of(403, ErrorCode.FORBIDDEN, ex.getMessage()));
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex) {
         // On logue le stacktrace complet ici car c'est inattendu
