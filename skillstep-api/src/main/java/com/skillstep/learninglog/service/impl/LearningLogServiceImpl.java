@@ -5,6 +5,7 @@ import com.skillstep.learninglog.domain.LearningLog;
 import com.skillstep.learninglog.dto.CategoryResponse;
 import com.skillstep.learninglog.dto.LearningLogRequest;
 import com.skillstep.learninglog.dto.LearningLogResponse;
+import com.skillstep.learninglog.mapper.LearningLogMapper;
 import com.skillstep.learninglog.repository.LearningLogRepository;
 import com.skillstep.learninglog.service.ICategoryService;
 import com.skillstep.learninglog.service.ILearningLogService;
@@ -27,6 +28,7 @@ public class LearningLogServiceImpl implements ILearningLogService {
     private final LearningLogRepository learningLogRepository;
     private final IUserService          userService;
     private final ICategoryService      categoryService;
+    private final LearningLogMapper mapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -38,7 +40,7 @@ public class LearningLogServiceImpl implements ILearningLogService {
                                              Pageable pageable) {
         return learningLogRepository
                 .findByFilters(userId, categoryId, from, to, search, pageable)
-                .map(this::toResponse);
+                .map(mapper::toResponse);
     }
 
     @Override
@@ -46,7 +48,7 @@ public class LearningLogServiceImpl implements ILearningLogService {
     public LearningLogResponse findById(Long id, Long userId) {
         return learningLogRepository
                 .findByIdAndUserId(id, userId)
-                .map(this::toResponse)
+                .map(mapper::toResponse)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("LearningLog", id));
     }
@@ -54,24 +56,16 @@ public class LearningLogServiceImpl implements ILearningLogService {
     @Override
     @Transactional
     public LearningLogResponse create(Long userId, LearningLogRequest request) {
-        var user = userService.findById(userId);
+        // 1. MapStruct crée l'entité depuis le request
+        LearningLog learningLog = mapper.toEntity(request);
 
-        // Résout la catégorie via ICategoryService — nullable
-        Category category = resolveCategory(request.getCategoryId(), userId);
-
-        LearningLog learningLog = LearningLog.builder()
-                .title(request.getTitle().trim())
-                .description(request.getDescription())
-                .durationMin(request.getDurationMin())
-                .logDate(request.getLogDate())
-                .resourceUrl(request.getResourceUrl())
-                .user(user)
-                .category(category)
-                .build();
+        // 2. Le service assigne les champs que MapStruct ignore
+        learningLog.setUser(userService.findById(userId));
+        learningLog.setCategory(resolveCategory(request.getCategoryId(), userId));
 
         LearningLog saved = learningLogRepository.save(learningLog);
         log.info("Log créé : '{}' pour userId={}", saved.getTitle(), userId);
-        return toResponse(saved);
+        return mapper.toResponse(saved);
     }
 
     @Override
@@ -92,7 +86,7 @@ public class LearningLogServiceImpl implements ILearningLogService {
         learningLog.setResourceUrl(request.getResourceUrl());
         learningLog.setCategory(category);
 
-        return toResponse(learningLog); // flush automatique
+        return mapper.toResponse(learningLog); // flush automatique
     }
 
     @Override
@@ -132,25 +126,4 @@ public class LearningLogServiceImpl implements ILearningLogService {
                         new ResourceNotFoundException("Catégorie", categoryId));
     }
 
-    private LearningLogResponse toResponse(LearningLog l) {
-        CategoryResponse categoryResponse = l.getCategory() != null
-                ? CategoryResponse.builder()
-                .id(l.getCategory().getId())
-                .name(l.getCategory().getName())
-                .color(l.getCategory().getColor())
-                .build()
-                : null;
-
-        return LearningLogResponse.builder()
-                .id(l.getId())
-                .title(l.getTitle())
-                .description(l.getDescription())
-                .durationMin(l.getDurationMin())
-                .logDate(l.getLogDate())
-                .resourceUrl(l.getResourceUrl())
-                .category(categoryResponse)
-                .createdAt(l.getCreatedAt())
-                .updatedAt(l.getUpdatedAt())
-                .build();
-    }
 }
