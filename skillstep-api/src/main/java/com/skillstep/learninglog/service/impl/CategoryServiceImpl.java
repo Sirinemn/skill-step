@@ -5,28 +5,40 @@ import com.skillstep.learninglog.domain.ColorPalette;
 import com.skillstep.learninglog.dto.CategoryRequest;
 import com.skillstep.learninglog.dto.CategoryResponse;
 import com.skillstep.learninglog.repository.CategoryRepository;
-import com.skillstep.learninglog.repository.LearningLogRepository;
 import com.skillstep.learninglog.service.ICategoryService;
+import com.skillstep.learninglog.service.ILearningLogService;
 import com.skillstep.shared.exception.ConflictException;
-import com.skillstep.shared.exception.ForbiddenException;
 import com.skillstep.shared.exception.ResourceNotFoundException;
-import com.skillstep.user.repository.UserRepository;
 import com.skillstep.user.service.IUserService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class CategoryServiceImpl implements ICategoryService {
 
-    private final CategoryRepository    categoryRepository;
-    private final LearningLogRepository learningLogRepository;
-    private final IUserService         userService;
+    private final CategoryRepository  categoryRepository;
+    private final IUserService        userService;
+
+    // @Lazy rompt le cycle : Spring instancie CategoryServiceImpl
+    // sans attendre que LearningLogServiceImpl soit prêt
+    // LearningLogServiceImpl sera instancié à la première utilisation
+    private final ILearningLogService learningLogService;
+
+    // Constructeur manuel — @RequiredArgsConstructor ne supporte pas @Lazy
+    public CategoryServiceImpl(
+            CategoryRepository  categoryRepository,
+            IUserService        userService,
+            @Lazy ILearningLogService learningLogService) {
+        this.categoryRepository  = categoryRepository;
+        this.userService         = userService;
+        this.learningLogService  = learningLogService;
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -41,23 +53,26 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     @Transactional
     public CategoryResponse create(Long userId, CategoryRequest request) {
-        // Vérifier unicité (name, user_id)
         String trimmedName = request.getName().trim();
+
         if (categoryRepository.existsByNameIgnoreCaseAndUserId(trimmedName, userId)) {
             throw new ConflictException(
                     "Vous avez déjà une catégorie nommée \"" + trimmedName + "\""
             );
         }
 
-        // Couleur : celle fournie OU palette automatique
+        // Couleur : celle fournie OU assignée depuis la palette
         String color = request.getColor() != null
                 ? request.getColor()
                 : ColorPalette.next(categoryRepository.countByUserId(userId));
 
+        // On récupère l'entité User via IUserService — pas via UserRepository
+        var user = userService.findById(userId);
+
         Category category = Category.builder()
                 .name(trimmedName)
                 .color(color)
-                .user(userService.getReferenceById(userId))
+                .user(user)
                 .build();
 
         Category saved = categoryRepository.save(category);
@@ -69,14 +84,13 @@ public class CategoryServiceImpl implements ICategoryService {
     @Transactional
     public CategoryResponse update(Long categoryId, Long userId,
                                    CategoryRequest request) {
-        Category category = findCategoryOwnedByUser(categoryId, userId);
-
+        Category category = findEntityOwnedByUser(categoryId, userId);
         String trimmedName = request.getName().trim();
 
         // Vérifie le doublon uniquement si le nom change
-        if (!category.getName().equalsIgnoreCase(trimmedName)
-                && categoryRepository.existsByNameIgnoreCaseAndUserId(
-                trimmedName, userId)) {
+        boolean nameChanged = !category.getName().equalsIgnoreCase(trimmedName);
+        if (nameChanged && categoryRepository
+                .existsByNameIgnoreCaseAndUserId(trimmedName, userId)) {
             throw new ConflictException(
                     "Vous avez déjà une catégorie nommée \"" + trimmedName + "\""
             );
@@ -87,29 +101,37 @@ public class CategoryServiceImpl implements ICategoryService {
             category.setColor(request.getColor());
         }
 
-        return toResponse(category); // save implicite via @Transactional
+        log.info("Catégorie mise à jour : id={} userId={}", categoryId, userId);
+        return toResponse(category); // flush automatique fin de transaction
     }
 
     @Override
     @Transactional
     public void delete(Long categoryId, Long userId) {
-        Category category = findCategoryOwnedByUser(categoryId, userId);
+        Category category = findEntityOwnedByUser(categoryId, userId);
 
-        // Vérifie si des logs utilisent cette catégorie
-        if (learningLogRepository.existsByCategoryId(categoryId)) {
+        // Délègue la vérification à ILearningLogService — pas au repo directement
+        if (learningLogService.existsByCategoryId(categoryId)) {
             throw new ConflictException(
-                    "Cette catégorie est utilisée par des logs. " +
+                    "Cette catégorie est utilisée par des apprentissages. " +
                             "Réassignez-les avant de la supprimer."
             );
         }
 
         categoryRepository.delete(category);
-        log.info("Catégorie supprimée : id={} pour userId={}", categoryId, userId);
+        log.info("Catégorie supprimée : id={} userId={}", categoryId, userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Category> findEntityByIdAndUserId(Long categoryId,
+                                                      Long userId) {
+        return categoryRepository.findByIdAndUserId(categoryId, userId);
     }
 
     // ─── Méthodes privées ───────────────────────────────────────
 
-    private Category findCategoryOwnedByUser(Long categoryId, Long userId) {
+    private Category findEntityOwnedByUser(Long categoryId, Long userId) {
         return categoryRepository
                 .findByIdAndUserId(categoryId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException(
