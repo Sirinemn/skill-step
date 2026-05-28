@@ -4,6 +4,7 @@ import com.skillstep.learninglog.domain.Category;
 import com.skillstep.learninglog.domain.ColorPalette;
 import com.skillstep.learninglog.dto.CategoryRequest;
 import com.skillstep.learninglog.dto.CategoryResponse;
+import com.skillstep.learninglog.mapper.CategoryMapper;
 import com.skillstep.learninglog.repository.CategoryRepository;
 import com.skillstep.learninglog.service.ICategoryService;
 import com.skillstep.learninglog.service.ILearningLogService;
@@ -24,6 +25,7 @@ public class CategoryServiceImpl implements ICategoryService {
 
     private final CategoryRepository  categoryRepository;
     private final IUserService        userService;
+    private final CategoryMapper      categoryMapper;
 
     // @Lazy rompt le cycle : Spring instancie CategoryServiceImpl
     // sans attendre que LearningLogServiceImpl soit prêt
@@ -34,9 +36,10 @@ public class CategoryServiceImpl implements ICategoryService {
     public CategoryServiceImpl(
             CategoryRepository  categoryRepository,
             IUserService        userService,
-            @Lazy ILearningLogService learningLogService) {
+            CategoryMapper categoryMapper, @Lazy ILearningLogService learningLogService) {
         this.categoryRepository  = categoryRepository;
         this.userService         = userService;
+        this.categoryMapper = categoryMapper;
         this.learningLogService  = learningLogService;
     }
 
@@ -46,7 +49,7 @@ public class CategoryServiceImpl implements ICategoryService {
         return categoryRepository
                 .findByUserIdOrderByNameAsc(userId)
                 .stream()
-                .map(this::toResponse)
+                .map(categoryMapper::toResponse)
                 .toList();
     }
 
@@ -69,15 +72,14 @@ public class CategoryServiceImpl implements ICategoryService {
         // On récupère l'entité User via IUserService — pas via UserRepository
         var user = userService.findById(userId);
 
-        Category category = Category.builder()
-                .name(trimmedName)
-                .color(color)
-                .user(user)
-                .build();
+        Category category = categoryMapper.toEntity(request); // ← MapStruct
+        category.setName(trimmedName);
+        category.setColor(color);
+        category.setUser(userService.findById(userId));
 
         Category saved = categoryRepository.save(category);
         log.info("Catégorie créée : '{}' pour userId={}", saved.getName(), userId);
-        return toResponse(saved);
+        return categoryMapper.toResponse(saved);
     }
 
     @Override
@@ -102,7 +104,7 @@ public class CategoryServiceImpl implements ICategoryService {
         }
 
         log.info("Catégorie mise à jour : id={} userId={}", categoryId, userId);
-        return toResponse(category); // flush automatique fin de transaction
+        return categoryMapper.toResponse(category); // flush automatique fin de transaction
     }
 
     @Override
@@ -138,11 +140,4 @@ public class CategoryServiceImpl implements ICategoryService {
                         "Catégorie", categoryId));
     }
 
-    private CategoryResponse toResponse(Category c) {
-        return CategoryResponse.builder()
-                .id(c.getId())
-                .name(c.getName())
-                .color(c.getColor())
-                .build();
-    }
 }
