@@ -3,6 +3,7 @@ package com.skillstep.learninglog.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CategoryRequest {
     @NotBlank(message = "Le nom est obligatoire")
     @Size(max = 100, message = "Le nom ne peut pas dépasser 100 caractères")
