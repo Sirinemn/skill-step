@@ -21,4 +21,4 @@ spring:
             client-secret: test-secret
       resourceserver:
         jwt:
-          issuer-uri: https://accounts.google.com
+          issuer-uri: http://localhost/fake
