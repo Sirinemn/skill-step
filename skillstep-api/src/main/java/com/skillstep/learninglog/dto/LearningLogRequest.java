@@ -1,6 +1,7 @@
 package com.skillstep.learninglog.dto;
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 @Getter @Setter @NoArgsConstructor
+@AllArgsConstructor
 public class LearningLogRequest {
 
     @NotBlank(message = "Le titre est obligatoire")
