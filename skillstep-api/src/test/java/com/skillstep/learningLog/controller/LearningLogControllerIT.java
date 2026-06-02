@@ -1,5 +1,6 @@
 package com.skillstep.learningLog.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skillstep.learninglog.controller.LearningLogController;
 import com.skillstep.learninglog.domain.Category;
 import com.skillstep.learninglog.domain.LearningLog;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -38,6 +40,8 @@ public class LearningLogControllerIT {
     private ILearningLogService learningLogService;
     @MockitoBean
     private IUserService userService;
+    @Autowired
+    private ObjectMapper objectMapper;
     User userMock;
     LearningLog learningLogMock;
     Category categoryMock;
@@ -68,6 +72,7 @@ public class LearningLogControllerIT {
                 .id(1L)
                 .title("Apprentissage Java")
                 .description("J'ai appris les bases de Java.")
+                .durationMin(60)
                 .logDate(java.time.LocalDate.now())
                 .category(CategoryResponse.builder()
                         .id(1L)
@@ -133,17 +138,8 @@ public class LearningLogControllerIT {
         mockMvc.perform(
                         MockMvcRequestBuilders.put("/learning-logs/1")
                                 .with(requestPostProcessor)
-                                .contentType("application/json")
-                                .content("""
-                                        {
-                                            "title": "Apprentissage Java - Mis à jour",
-                                            "description": "J'ai approfondi mes connaissances en Java.",
-                                            "durationMin": 90,
-                                            "logDate": "2024-06-02",
-                                            "resourceUrl": "https://www.example.com/java-advanced-tutorial",
-                                            "categoryId": 1
-                                        }
-                                        """)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(learningLogResponseMock))
                 )
                 .andExpect(status().isOk());
     }
