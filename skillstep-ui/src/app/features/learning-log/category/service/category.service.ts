@@ -1,29 +1,53 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
-import { Observable } from 'rxjs';
-import { CategoryResponse } from '../models/category-response.model';
+import { Observable, tap } from 'rxjs';
+import { Category } from '../models/category.model';
 import { CategoryRequest } from '../models/category-request.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CategoryService {
-
   private readonly baseUrl = `${environment.apiUrl}/categories`;
 
-  constructor(private http: HttpClient) { }
+  // Cache local des catégories — évite des appels répétés
+  readonly categories$ = signal<Category[]>([]);
 
-  getCategories(): Observable<CategoryResponse[]> {
-    return this.http.get<CategoryResponse[]>(this.baseUrl);
+  constructor(private http: HttpClient) {}
+
+  getCategories(): Observable<Category[]> {
+    return this.http.get<Category[]>(this.baseUrl).pipe(
+      // Met à jour le signal avec les données récupérées
+      tap((categories) => this.categories$.set(categories))
+    );
   }
-  createCategory(categoryRequest: CategoryRequest): Observable<CategoryResponse> {
-    return this.http.post<CategoryResponse>(this.baseUrl, categoryRequest);
+  createCategory(categoryRequest: CategoryRequest): Observable<Category> {
+    return this.http.post<Category>(this.baseUrl, categoryRequest).pipe(
+      // Ajoute la nouvelle catégorie au signal existant
+      tap((newCategory) =>
+        this.categories$.update((categories) => 
+          [...categories, newCategory].sort((a, b) => a.name.localeCompare(b.name))
+        )
+      )
+    );
   }
-  updateCategory(id: number, categoryRequest: CategoryRequest): Observable<CategoryResponse> {
-    return this.http.put<CategoryResponse>(`${this.baseUrl}/${id}`, categoryRequest);
+  updateCategory(id: number,categoryRequest: CategoryRequest,): Observable<Category> {
+    return this.http.put<Category>(`${this.baseUrl}/${id}`,categoryRequest,).pipe(
+      tap((updatedCategory) =>
+        this.categories$.update((categories) =>
+          categories.map((cat) => (cat.id === id ? updatedCategory : cat))
+        )
+      )
+    );
   }
   deleteCategory(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/${id}`).pipe(
+      tap(() =>
+        this.categories$.update((categories) =>
+          categories.filter((cat) => cat.id !== id)
+        )
+      )
+    );
   }
 }
