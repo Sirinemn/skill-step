@@ -4,7 +4,7 @@ export interface LearningLog {
   id: number;
   title: string;
   description: string | null;
-  durationMin: string;
+  durationMin: number;
   logDate: string;
   resourceUrl: string | null;
   category: Category | null;
