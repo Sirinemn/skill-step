@@ -1,1 +1,226 @@
-<p>journal works!</p>
+<div class="p-4 md:p-8">
+
+  <!-- En-tête -->
+  <div class="flex items-center justify-between mb-6 gap-4">
+    <div>
+      <h1 class="text-xl md:text-2xl font-bold
+                 text-text-heading dark:text-gray-100">
+        Mon Journal
+      </h1>
+      <p class="text-text-muted dark:text-gray-400 text-sm mt-0.5">
+        {{ totalElements$() }} apprentissage{{ totalElements$() > 1 ? 's' : '' }}
+      </p>
+    </div>
+    <a routerLink="/journal/new" class="btn-primary text-sm px-4 py-2.5
+                                        flex items-center gap-2 shrink-0">
+      <span class="text-lg leading-none">+</span>
+      Ajouter
+    </a>
+  </div>
+
+  <!-- ── Filtres ─────────────────────────── -->
+  <div class="rounded-2xl border p-4 mb-6
+              bg-bg-surface dark:bg-gray-800
+              border-border-card dark:border-gray-700">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+
+      <!-- Recherche -->
+      <input
+        type="text"
+        [(ngModel)]="searchText"
+        placeholder="🔍 Rechercher..."
+        class="input-field dark:bg-gray-700 dark:border-gray-600
+               dark:text-gray-100 dark:placeholder-gray-500"
+      />
+
+      <!-- Catégorie -->
+      <select
+        [(ngModel)]="selectedCatId"
+        class="input-field dark:bg-gray-700 dark:border-gray-600
+               dark:text-gray-100">
+        <option value="">Toutes les catégories</option>
+        <option *ngFor="let cat of categories$()" [value]="cat.id">
+          {{ cat.name }}
+        </option>
+      </select>
+
+      <!-- Date de début -->
+      <input
+        type="date"
+        [(ngModel)]="dateFrom"
+        class="input-field dark:bg-gray-700 dark:border-gray-600
+               dark:text-gray-100"
+      />
+
+      <!-- Date de fin -->
+      <input
+        type="date"
+        [(ngModel)]="dateTo"
+        class="input-field dark:bg-gray-700 dark:border-gray-600
+               dark:text-gray-100"
+      />
+
+    </div>
+
+    <!-- Boutons filtres -->
+    <div class="flex gap-3 mt-3">
+      <button (click)="applyFilters()"
+              class="btn-primary text-sm px-5 py-2">
+        Filtrer
+      </button>
+      <button (click)="resetFilters()"
+              class="btn-secondary text-sm px-5 py-2">
+        Réinitialiser
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ── État chargement ────────────────── -->
+  <div *ngIf="isLoading$()"
+       class="flex items-center justify-center py-16">
+    <div class="w-8 h-8 border-4 border-primary-200
+                border-t-primary-500 rounded-full animate-spin">
+    </div>
+  </div>
+
+  <!-- ── Erreur ─────────────────────────── -->
+  <div *ngIf="error$() && !isLoading$()"
+       class="card border-red-200 dark:border-red-800
+              bg-red-50 dark:bg-red-950 text-red-600
+              dark:text-red-300 text-sm mb-4">
+    {{ error$() }}
+  </div>
+
+  <!-- ── Empty state ────────────────────── -->
+  <div *ngIf="!isLoading$() && logs$().length === 0 && !error$()"
+       class="rounded-2xl border border-dashed p-12 text-center
+              border-border-card dark:border-gray-600
+              bg-bg-surface dark:bg-gray-800/50">
+    <div class="w-16 h-16 rounded-2xl mx-auto mb-4
+                flex items-center justify-center text-4xl
+                bg-primary-50 dark:bg-primary-950">
+      📖
+    </div>
+    <h3 class="font-semibold text-text-heading dark:text-gray-100 mb-2">
+      Aucun apprentissage trouvé
+    </h3>
+    <p class="text-text-muted dark:text-gray-400 text-sm mb-6 max-w-xs mx-auto">
+      Commence par enregistrer ce que tu as appris aujourd'hui.
+    </p>
+    <a routerLink="/journal/new" class="btn-primary text-sm px-6 py-2.5">
+      + Ajouter mon premier apprentissage
+    </a>
+  </div>
+
+  <!-- ── Liste des logs ─────────────────── -->
+  <div *ngIf="!isLoading$() && logs$().length > 0"
+       class="flex flex-col gap-3">
+
+    <div *ngFor="let log of logs$()"
+         class="rounded-2xl border p-4 md:p-5
+                transition-all duration-200 group
+                bg-bg-surface dark:bg-gray-800
+                border-border-card dark:border-gray-700
+                hover:shadow-card-hover dark:hover:border-gray-600">
+
+      <div class="flex items-start gap-3">
+
+        <!-- Barre couleur catégorie -->
+        <div class="w-1 self-stretch rounded-full shrink-0 mt-0.5"
+             [style.background-color]="log.category?.color ?? '#6C63FF'">
+        </div>
+
+        <!-- Contenu -->
+        <div class="flex-1 min-w-0">
+
+          <!-- Titre + actions -->
+          <div class="flex items-start justify-between gap-3 mb-1">
+            <h3 class="font-semibold text-sm md:text-base
+                       text-text-heading dark:text-gray-100
+                       group-hover:text-primary-500
+                       dark:group-hover:text-primary-400
+                       transition-colors truncate">
+              {{ log.title }}
+            </h3>
+
+            <!-- Actions -->
+            <div class="flex gap-2 shrink-0 opacity-0
+                        group-hover:opacity-100 transition-opacity">
+              <a [routerLink]="['/journal', log.id, 'edit']"
+                 class="text-xs text-text-muted dark:text-gray-500
+                        hover:text-primary-500 dark:hover:text-primary-400
+                        transition-colors px-2 py-1 rounded-lg
+                        hover:bg-primary-50 dark:hover:bg-gray-700">
+                ✏️ Éditer
+              </a>
+              <button
+                (click)="onDelete(log.id)"
+                class="text-xs text-text-muted dark:text-gray-500
+                       hover:text-red-500 dark:hover:text-red-400
+                       transition-colors px-2 py-1 rounded-lg
+                       hover:bg-red-50 dark:hover:bg-red-950">
+                🗑️ Supprimer
+              </button>
+            </div>
+          </div>
+
+          <!-- Meta : date + durée + catégorie -->
+          <div class="flex flex-wrap items-center gap-2 mt-1">
+            <span class="text-xs text-text-muted dark:text-gray-500">
+              {{ formatDate(log.logDate) }}
+            </span>
+            <span class="text-xs text-text-muted dark:text-gray-500">·</span>
+            <span class="text-xs text-text-muted dark:text-gray-500">
+              {{ formatDuration(log.durationMin) }}
+            </span>
+            <span *ngIf="log.category"
+                  class="inline-flex items-center gap-1
+                         px-2 py-0.5 rounded-full text-xs font-medium"
+                  [style.background-color]="log.category.color + '20'"
+                  [style.color]="log.category.color">
+              {{ log.category.name }}
+            </span>
+          </div>
+
+          <!-- Description (tronquée) -->
+          <p *ngIf="log.description"
+             class="text-xs text-text-muted dark:text-gray-500
+                    mt-2 line-clamp-2 leading-relaxed">
+            {{ log.description }}
+          </p>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Pagination ─────────────────────── -->
+  <div *ngIf="totalPages$() > 1"
+       class="flex items-center justify-center gap-2 mt-8">
+
+    <button
+      (click)="goToPage(currentPage$() - 1)"
+      [disabled]="currentPage$() === 0"
+      class="btn-secondary text-sm px-4 py-2
+             disabled:opacity-40 disabled:cursor-not-allowed">
+      ← Précédent
+    </button>
+
+    <span class="text-sm text-text-muted dark:text-gray-400 px-4">
+      Page {{ currentPage$() + 1 }} / {{ totalPages$() }}
+    </span>
+
+    <button
+      (click)="goToPage(currentPage$() + 1)"
+      [disabled]="currentPage$() >= totalPages$() - 1"
+      class="btn-secondary text-sm px-4 py-2
+             disabled:opacity-40 disabled:cursor-not-allowed">
+      Suivant →
+    </button>
+
+  </div>
+
+</div>
