@@ -1,1 +1,193 @@
-<p>log-form works!</p>
+<div class="p-4 md:p-8 max-w-2xl">
+
+  <!-- En-tête -->
+  <div class="mb-6">
+    <h1 class="text-xl md:text-2xl font-bold
+               text-text-heading dark:text-gray-100">
+      {{ isEditMode$() ? 'Modifier l\'apprentissage' : 'Nouvel apprentissage' }}
+    </h1>
+    <p class="text-text-muted dark:text-gray-400 text-sm mt-1">
+      {{ isEditMode$()
+          ? 'Mettez à jour les informations de cet apprentissage.'
+          : 'Qu\'avez-vous appris aujourd\'hui ?' }}
+    </p>
+  </div>
+
+  <!-- Erreur globale -->
+  <div *ngIf="error$()"
+       class="rounded-xl p-4 mb-4 text-sm
+              bg-red-50 dark:bg-red-950
+              border border-red-200 dark:border-red-800
+              text-red-600 dark:text-red-300">
+    ❌ {{ error$() }}
+  </div>
+
+  <!-- Formulaire -->
+  <form [formGroup]="logForm" (ngSubmit)="onSubmit()">
+    <div class="rounded-2xl border p-6
+                bg-bg-surface dark:bg-gray-800
+                border-border-card dark:border-gray-700">
+
+      <div class="flex flex-col gap-5">
+
+        <!-- Titre -->
+        <div>
+          <label class="label dark:text-gray-300">
+            Titre <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            formControlName="title"
+            placeholder="Ex: Configuration de Spring Security"
+            class="input-field dark:bg-gray-700 dark:border-gray-600
+                   dark:text-gray-100 dark:placeholder-gray-500"
+            [class.border-red-400]="titleErrors?.invalid && titleErrors.touched"
+          />
+          <p *ngIf="titleErrors?.errors?.['required'] && titleErrors.touched"
+             class="text-red-500 text-xs mt-1">
+            Le titre est obligatoire
+          </p>
+          <p *ngIf="titleErrors?.errors?.['maxlength']"
+             class="text-red-500 text-xs mt-1">
+            Maximum 255 caractères
+          </p>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="label dark:text-gray-300">Description</label>
+          <textarea
+            formControlName="description"
+            rows="4"
+            placeholder="Ce que vous avez appris, retenu, compris..."
+            class="input-field resize-none
+                   dark:bg-gray-700 dark:border-gray-600
+                   dark:text-gray-100 dark:placeholder-gray-500">
+          </textarea>
+          <p class="text-xs text-text-muted dark:text-gray-500 text-right mt-1">
+            {{ logForm.get('description')?.value?.length ?? 0 }} / 5000
+          </p>
+        </div>
+
+        <!-- Durée + Date sur la même ligne -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <!-- Durée -->
+          <div>
+            <label class="label dark:text-gray-300">
+              Durée (minutes) <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              formControlName="durationMin"
+              min="1"
+              max="1440"
+              class="input-field dark:bg-gray-700 dark:border-gray-600
+                     dark:text-gray-100"
+              [class.border-red-400]="durationErrors?.invalid
+                                      && durationErrors.touched"
+            />
+            <p *ngIf="durationErrors?.errors?.['min']
+                      || durationErrors?.errors?.['max']"
+               class="text-red-500 text-xs mt-1">
+              Entre 1 et 1440 minutes
+            </p>
+          </div>
+
+          <!-- Date -->
+          <div>
+            <label class="label dark:text-gray-300">
+              Date <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              formControlName="logDate"
+              class="input-field dark:bg-gray-700 dark:border-gray-600
+                     dark:text-gray-100"
+            />
+          </div>
+
+        </div>
+
+        <!-- Catégorie -->
+        <div>
+          <label class="label dark:text-gray-300">
+            Catégorie
+            <span class="text-text-muted dark:text-gray-500 font-normal">
+              (optionnelle)
+            </span>
+          </label>
+          <select
+            formControlName="categoryId"
+            class="input-field dark:bg-gray-700 dark:border-gray-600
+                   dark:text-gray-100">
+            <option [ngValue]="null">Sans catégorie</option>
+            <option *ngFor="let cat of categories$()" [ngValue]="cat.id">
+              {{ cat.name }}
+            </option>
+          </select>
+
+          <!-- Lien vers création catégorie -->
+          <p class="text-xs text-text-muted dark:text-gray-500 mt-1">
+            Catégorie manquante ?
+            <a routerLink="/categories"
+               class="text-primary-500 hover:underline">
+              Gérer mes catégories
+            </a>
+          </p>
+        </div>
+
+        <!-- Lien ressource -->
+        <div>
+          <label class="label dark:text-gray-300">
+            Lien ressource
+            <span class="text-text-muted dark:text-gray-500 font-normal">
+              (optionnel)
+            </span>
+          </label>
+          <input
+            type="url"
+            formControlName="resourceUrl"
+            placeholder="https://docs.spring.io/..."
+            class="input-field dark:bg-gray-700 dark:border-gray-600
+                   dark:text-gray-100 dark:placeholder-gray-500"
+          />
+        </div>
+
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-3 mt-6 pt-5
+                  border-t border-border-soft dark:border-gray-700">
+
+        <button
+          type="submit"
+          [disabled]="logForm.invalid || isSaving$()"
+          class="btn-primary text-sm px-6 py-2.5
+                 disabled:opacity-50 disabled:cursor-not-allowed">
+          <span *ngIf="!isSaving$()">
+            {{ isEditMode$() ? '💾 Mettre à jour' : '✅ Enregistrer' }}
+          </span>
+          <span *ngIf="isSaving$()"
+                class="flex items-center gap-2">
+            <span class="w-4 h-4 border-2 border-white
+                         border-t-transparent rounded-full
+                         animate-spin"></span>
+            Enregistrement...
+          </span>
+        </button>
+
+        <button
+          type="button"
+          (click)="onCancel()"
+          [disabled]="isSaving$()"
+          class="btn-secondary text-sm px-6 py-2.5">
+          Annuler
+        </button>
+
+      </div>
+
+    </div>
+  </form>
+
+</div>
