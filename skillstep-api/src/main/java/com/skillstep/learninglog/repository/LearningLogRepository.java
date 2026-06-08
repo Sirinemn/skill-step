@@ -16,14 +16,17 @@ public interface LearningLogRepository extends JpaRepository<LearningLog, Long> 
     // Liste paginée avec filtres optionnels
     // @Query JPQL — plus lisible et typé que les méthodes derived
     @Query("""
-        SELECT l FROM LearningLog l
-        LEFT JOIN FETCH l.category
-        WHERE l.user.id = :userId
-          AND (:categoryId IS NULL OR l.category.id = :categoryId)
-          AND (:from IS NULL OR l.logDate >= :from)
-          AND (:to   IS NULL OR l.logDate <= :to)
-          AND (:search IS NULL OR LOWER(l.title) LIKE LOWER(CONCAT('%', :search, '%')))
-        ORDER BY l.logDate DESC, l.createdAt DESC
+            SELECT l FROM LearningLog l
+            LEFT JOIN FETCH l.category
+            WHERE l.user.id = :userId
+              AND (:categoryId IS NULL OR l.category.id = :categoryId)
+              AND (:from IS NULL OR l.logDate >= :from)
+              AND (:to   IS NULL OR l.logDate <= :to)
+              AND (
+                    CAST(:search AS string) IS NULL
+                    OR LOWER(l.title) LIKE LOWER(CONCAT('%', :search, '%'))
+                  )
+            ORDER BY l.logDate DESC, l.createdAt DESC
         """)
     Page<LearningLog> findByFilters(
             @Param("userId")     Long userId,
