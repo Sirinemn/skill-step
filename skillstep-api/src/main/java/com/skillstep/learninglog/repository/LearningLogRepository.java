@@ -24,7 +24,7 @@ public interface LearningLogRepository extends JpaRepository<LearningLog, Long> 
               AND (:to   IS NULL OR l.logDate <= :to)
               AND (
                     CAST(:search AS string) IS NULL
-                    OR LOWER(l.title) LIKE LOWER(CONCAT('%', :search, '%'))
+                    OR LOWER(l.title) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%'))
                   )
             ORDER BY l.logDate DESC, l.createdAt DESC
         """)
