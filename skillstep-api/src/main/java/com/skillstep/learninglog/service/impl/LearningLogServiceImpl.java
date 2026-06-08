@@ -38,8 +38,13 @@ public class LearningLogServiceImpl implements ILearningLogService {
                                              LocalDate to,
                                              String search,
                                              Pageable pageable) {
+        // Défense : chaîne vide ou blank → null
+        String normalizedSearch = (search != null && !search.isBlank())
+                ? search.trim()
+                : null;
+
         return learningLogRepository
-                .findByFilters(userId, categoryId, from, to, search, pageable)
+                .findByFilters(userId, categoryId, from, to, normalizedSearch, pageable)
                 .map(mapper::toResponse);
     }
 
