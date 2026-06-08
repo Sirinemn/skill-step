@@ -12,18 +12,21 @@ import com.skillstep.learninglog.service.impl.LearningLogServiceImpl;
 import com.skillstep.user.domain.User;
 import com.skillstep.user.service.IUserService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -66,6 +69,25 @@ public class LearningLogServiceImplTest {
         // Then
         assertEquals(Page.empty(), learningLogService.findAll(1L, 1L, null, null, null, null));
 
+    }
+    @Test
+    @DisplayName("findAll — doit passer null quand search est une chaîne vide")
+    void findAll_shouldNormalizeEmptySearchToNull() {
+        Page<LearningLog> emptyPage = Page.empty();
+
+        when(learningLogRepository.findByFilters(
+                eq(1L), isNull(), isNull(), isNull(),
+                isNull(), // ← null, pas ""
+                any(Pageable.class)))
+                .thenReturn(emptyPage);
+
+        learningLogService.findAll(1L, null, null, null, "", PageRequest.of(0, 10));
+
+        verify(learningLogRepository).findByFilters(
+                eq(1L), isNull(), isNull(), isNull(),
+                isNull(), // vérifie que "" a bien été transformé en null
+                any(Pageable.class)
+        );
     }
     @Test
     void shouldCreateLearningLog() {
