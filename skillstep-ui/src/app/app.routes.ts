@@ -35,6 +35,13 @@ export const routes: Routes = [
       import('./features/learning-log/learning-log.routes')
         .then(m => m.LEARNING_LOG_ROUTES),
   },
+  // ── Catégories ─────────────────────────────────────────
+  {
+    path: 'categories',
+    loadChildren: () =>
+      import('./features/learning-log/categories.routes')
+        .then(m => m.CATEGORIES_ROUTES),
+  },
 
   // ── Profil ─────────────────────────────────────────────
   {
