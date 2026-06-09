@@ -13,7 +13,7 @@ import { LearningLogRequest } from '../models/learning-log-request.model';
 })
 export class LearningLogService {
 
-  private readonly apiUrl = `${environment.apiUrl}/learning-log`;
+  private readonly apiUrl = `${environment.apiUrl}/learning-logs`;
 
   // Signal pour le total — utilisé par le dashboard
   readonly totalLogs$ = signal<number>(0);
