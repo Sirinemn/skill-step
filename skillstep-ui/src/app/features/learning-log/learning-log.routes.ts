@@ -29,20 +29,5 @@ export const LEARNING_LOG_ROUTES: Routes = [
             .then(m => m.LogFormComponent),
       },
     ]
-  },
-  {
-    path: 'categories',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('../../layouts/main-layout/main-layout.component')
-        .then(m => m.MainLayoutComponent),
-    children: [
-      {
-        path: '',
-        loadComponent: () =>
-          import('./pages/categories/categories.component')
-            .then(m => m.CategoriesComponent),
-      }
-    ]
   }
 ];
