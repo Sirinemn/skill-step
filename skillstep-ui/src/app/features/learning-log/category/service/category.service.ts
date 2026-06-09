@@ -16,7 +16,7 @@ export class CategoryService {
 
   constructor(private http: HttpClient) {}
 
-  getCategories(): Observable<Category[]> {
+  loadAll(): Observable<Category[]> {
     return this.http.get<Category[]>(this.baseUrl).pipe(
       // Met à jour le signal avec les données récupérées
       tap((categories) => this.categories$.set(categories))
