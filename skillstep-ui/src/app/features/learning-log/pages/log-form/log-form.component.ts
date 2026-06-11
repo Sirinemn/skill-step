@@ -32,7 +32,7 @@ export class LogFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.categoryService.getCategories().subscribe();
+    this.categoryService.loadAll().subscribe();
 
     // Vérifie si on est en mode édition
     const id = this.route.snapshot.paramMap.get('id');
