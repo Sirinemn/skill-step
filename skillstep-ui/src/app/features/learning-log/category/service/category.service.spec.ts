@@ -28,17 +28,16 @@ describe('CategoryService', () => {
   it('should have an empty categories signal initially', () => {
     expect(service.categories$()).toEqual([]);
   });
-  it('should update categories signal when getCategories is called', () => {
-    
-    service.getCategories().subscribe(categories => {
+  it('should load categories and update signal when loadAll is called', () => {
+    service.loadAll().subscribe(categories => {
       expect(categories).toEqual(mockCategories);
       expect(service.categories$()).toEqual(mockCategories);
     });
-
     const req = httpMock.expectOne(`${service['baseUrl']}`);
     expect(req.request.method).toBe('GET');
     req.flush(mockCategories);
   });
+  
   it('should add new category to signal when createCategory is called', () => {
     const newCategory = { id: 3, name: 'Category 3' , color: 'green'};
     service.categories$.set(mockCategories); 
