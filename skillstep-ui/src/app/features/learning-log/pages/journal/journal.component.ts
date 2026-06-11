@@ -47,7 +47,7 @@ export class JournalComponent implements OnInit {
 
   ngOnInit(): void {
     // Charge catégories et logs en parallèle
-    this.categoryService.getCategories().subscribe();
+    this.categoryService.loadAll().subscribe();
     this.loadLogs();
   }
 
