@@ -5,6 +5,7 @@ import { Category } from '../../category/models/category.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ConfirmDialogService } from '../../../../shared/services/confirm-dialog.service';
 
 @Component({
   selector: 'app-categories',
@@ -32,7 +33,8 @@ export class CategoriesComponent implements OnInit {
 
   constructor(
     private readonly categoryService: CategoryService,
-    private readonly destroyRef: DestroyRef
+    private readonly destroyRef: DestroyRef,
+    private readonly confirmService: ConfirmDialogService,
 
   ) {}
 
@@ -103,18 +105,22 @@ export class CategoriesComponent implements OnInit {
   }
 
   onDelete(id: number): void {
-    if (!confirm('Supprimer cette catégorie ?')) return;
-
-    this.categoryService.deleteCategory(id)
+    this.confirmService.open({
+      title:   'Supprimer cette catégorie',
+      message: 'Si des logs utilisent cette catégorie, la suppression sera bloquée.',
+    })
     .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe({
-      next:  () => this.showSuccess('Catégorie supprimée.'),
-      error: err => {
-        this.error$.set(
-          err.error?.message ??
-          'Impossible de supprimer — des logs utilisent peut-être cette catégorie.'
-        );
-      },
+    .subscribe(confirmed => {
+      if (!confirmed) return;
+
+      this.categoryService.deleteCategory(id)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next:  () => this.showSuccess('Catégorie supprimée.'),
+          error: err => this.error$.set(
+            err.error?.message ?? 'Impossible de supprimer.'
+          ),
+        });
     });
   }
 

@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ConfirmDialogService } from '../../../../shared/services/confirm-dialog.service';
 
 @Component({
   selector: 'app-journal',
@@ -44,7 +45,8 @@ export class JournalComponent implements OnInit {
   constructor(
     private readonly logService:      LearningLogService,
     private readonly categoryService: CategoryService,
-    private readonly destroyRef:      DestroyRef
+    private readonly destroyRef:      DestroyRef,
+    private readonly confirmService:      ConfirmDialogService,
   ) {}
 
   ngOnInit(): void {
@@ -107,12 +109,23 @@ export class JournalComponent implements OnInit {
   }
 
   onDelete(id: number): void {
-    if (!confirm('Supprimer cet apprentissage ?')) return;
-    this.logService.delete(id)  
+    this.confirmService.open({
+      title:        'Supprimer cet apprentissage',
+      message:      'Cette action est irréversible. Le log sera définitivement supprimé.',
+      confirmLabel: 'Oui, supprimer',
+      cancelLabel:  'Annuler',
+      danger:       true,
+    })
     .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe({
-      next: () => this.loadLogs(),
-      error: () => this.error$.set('Erreur lors de la suppression.'),
+    .subscribe(confirmed => {
+      if (!confirmed) return;
+
+      this.logService.delete(id)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next:  () => this.loadLogs(),
+          error: () => this.error$.set('Erreur lors de la suppression.'),
+        });
     });
   }
 
