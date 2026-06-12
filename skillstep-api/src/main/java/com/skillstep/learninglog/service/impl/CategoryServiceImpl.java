@@ -56,7 +56,7 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     @Transactional
     public CategoryResponse create(Long userId, CategoryRequest request) {
-        String trimmedName = request.getName().trim();
+        String trimmedName = normalizeName(request.getName());
 
         if (categoryRepository.existsByNameIgnoreCaseAndUserId(trimmedName, userId)) {
             throw new ConflictException(
@@ -87,7 +87,7 @@ public class CategoryServiceImpl implements ICategoryService {
     public CategoryResponse update(Long categoryId, Long userId,
                                    CategoryRequest request) {
         Category category = findEntityOwnedByUser(categoryId, userId);
-        String trimmedName = request.getName().trim();
+        String trimmedName = normalizeName(request.getName());
 
         // Vérifie le doublon uniquement si le nom change
         boolean nameChanged = !category.getName().equalsIgnoreCase(trimmedName);
@@ -138,6 +138,14 @@ public class CategoryServiceImpl implements ICategoryService {
                 .findByIdAndUserId(categoryId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Catégorie", categoryId));
+    }
+    private String normalizeName(String name) {
+        if (name == null) return "";
+        String normalized = name.trim().replaceAll("\\s+", " ");
+        // Capitalise uniquement la première lettre
+        if (normalized.isEmpty()) return normalized;
+        return Character.toUpperCase(normalized.charAt(0))
+                + normalized.substring(1).toLowerCase();
     }
 
 }
