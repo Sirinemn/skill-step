@@ -1,10 +1,11 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, DestroyRef, signal } from '@angular/core';
 import { getDisplayName } from '../../../../core/models/user.model';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth.service';
 import { UserService } from '../../../../core/services/user.service';
 import { UpdateProfilePayload } from '../../../../core/models/updateProfilePayload.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-profile',
@@ -32,6 +33,7 @@ export class ProfileComponent {
     private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly fb:          FormBuilder,
+    private readonly destroyRef:    DestroyRef
   ) {}
 
   ngOnInit(): void {
@@ -72,7 +74,9 @@ export class ProfileComponent {
     this.isSaving.set(true);
     this.saveError.set(null);
 
-    this.userService.updateProfile(payload).subscribe({
+    this.userService.updateProfile(payload)
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
       next: () => {
         this.isSaving.set(false);
         this.isEditing.set(false);
