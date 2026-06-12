@@ -62,6 +62,18 @@
         </span>
       </button>
     </div>
+    <!-- Affiche les suggestions -->
+    <div *ngIf="getSuggestions(newCategoryName).length > 0 && newCategoryName.length > 2"
+        class="mt-2 p-3 rounded-xl border text-sm
+                bg-amber-50 dark:bg-amber-950
+                border-amber-200 dark:border-amber-800
+                text-amber-700 dark:text-amber-300">
+      ⚠️ Catégories similaires existantes :
+      <span *ngFor="let s of getSuggestions(newCategoryName)"
+            class="font-medium ml-1">
+        "{{ s.name }}"
+      </span>
+    </div>
 
     <p class="text-xs text-text-muted dark:text-gray-500 mt-2">
       La couleur est assignée automatiquement.
