@@ -6,6 +6,7 @@ import { CategoryService } from '../../category/service/category.service';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { signal } from '@angular/core';
+import { of, throwError } from 'rxjs';
 
 describe('CategoriesComponent', () => {
   let component: CategoriesComponent;
@@ -16,10 +17,14 @@ describe('CategoriesComponent', () => {
   ];
   const mockCategoryService = {
     categories$: signal(mockCategories),
-    loadAll: jest.fn().mockReturnValue({ subscribe: (callbacks: any) => callbacks.next(mockCategories) }),
-    createCategory: jest.fn(),
-    updateCategory: jest.fn(),
-    deleteCategory: jest.fn(),
+    loadAll: jest
+      .fn()
+      .mockReturnValue({
+        subscribe: (callbacks: any) => callbacks.next(mockCategories),
+      }),
+    createCategory: jest.fn().mockReturnValue(of({})),
+    updateCategory: jest.fn().mockReturnValue(of({})),
+    deleteCategory: jest.fn().mockReturnValue(of({})),
   };
 
   beforeEach(async () => {
@@ -48,7 +53,8 @@ describe('CategoriesComponent', () => {
   it('should set error when loadAll fails', () => {
     const errorMessage = 'Load failed';
     mockCategoryService.loadAll.mockReturnValueOnce({
-      subscribe: (callbacks: any) => callbacks.error({ error: { message: errorMessage } }),
+      subscribe: (callbacks: any) =>
+        callbacks.error({ error: { message: errorMessage } }),
     });
     component.ngOnInit();
     expect(component.isLoading$()).toBe(false);
@@ -56,9 +62,7 @@ describe('CategoriesComponent', () => {
   });
   it('should create category successfully', () => {
     const newCategory = { id: 3, name: 'Vue', color: '#42b883' };
-    mockCategoryService.createCategory.mockReturnValueOnce({
-      subscribe: (callbacks: any) => callbacks.next(newCategory),
-    });
+    mockCategoryService.createCategory.mockReturnValueOnce(of(newCategory));
     component.newCategoryName = 'Vue';
     component.onCreate();
     expect(component.isCreating$()).toBe(false);
@@ -67,9 +71,9 @@ describe('CategoriesComponent', () => {
   });
   it('should handle create category error', () => {
     const errorMessage = 'Create failed';
-    mockCategoryService.createCategory.mockReturnValueOnce({
-      subscribe: (callbacks: any) => callbacks.error({ error: { message: errorMessage } }),
-    });
+    mockCategoryService.createCategory.mockReturnValueOnce(
+      throwError(() => ({ error: { message: errorMessage } })),
+    );
     component.newCategoryName = 'Vue';
     component.onCreate();
     expect(component.isCreating$()).toBe(false);
@@ -90,10 +94,12 @@ describe('CategoriesComponent', () => {
     expect(component.editColor).toBe('');
   });
   it('should update category successfully', () => {
-    const updatedCategory = { id: 1, name: 'Angular Updated', color: '#dd0031' };
-    mockCategoryService.updateCategory.mockReturnValueOnce({
-      subscribe: (callbacks: any) => callbacks.next(updatedCategory),
-    });
+    const updatedCategory = {
+      id: 1,
+      name: 'Angular Updated',
+      color: '#dd0031',
+    };
+    mockCategoryService.updateCategory.mockReturnValueOnce(of(updatedCategory));
     component.editingId$.set(1);
     component.editName = 'Angular Updated';
     component.onUpdate(1);
@@ -102,13 +108,13 @@ describe('CategoriesComponent', () => {
   });
   it('should handle update category error', () => {
     const errorMessage = 'Update failed';
-    mockCategoryService.updateCategory.mockReturnValueOnce({
-      subscribe: (callbacks: any) => callbacks.error({ error: { message: errorMessage } }),
-    });
+    mockCategoryService.updateCategory.mockReturnValueOnce(
+      throwError(() => ({ error: { message: errorMessage } })),
+    );
     component.editingId$.set(1);
     component.editName = 'Angular Updated';
     component.onUpdate(1);
-    expect(component.error$()).toBe(errorMessage);  
+    expect(component.error$()).toBe(errorMessage);
   });
   it('should not delete category if user cancels', () => {
     window.confirm = jest.fn().mockReturnValue(false);
