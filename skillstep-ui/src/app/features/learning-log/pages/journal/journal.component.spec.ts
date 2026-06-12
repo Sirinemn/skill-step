@@ -7,6 +7,7 @@ import { CategoryService } from '../../category/service/category.service';
 import { LearningLogService } from '../../service/learning-log.service';
 import { ActivatedRoute } from '@angular/router';
 import { signal } from '@angular/core';
+import { ConfirmDialogService } from '../../../../shared/services/confirm-dialog.service';
 
 describe('JournalComponent', () => {
   let component: JournalComponent;
@@ -46,6 +47,9 @@ describe('JournalComponent', () => {
       queryParams: {},
     },
   };
+  const mockConfirmService = {
+    open: jest.fn().mockReturnValue(of({})),
+  };
 
   beforeEach(async () => {
     mockLogService.getAll.mockReturnValue(of(mockPage));
@@ -60,6 +64,7 @@ describe('JournalComponent', () => {
         { provide: LearningLogService, useValue: mockLogService },
         { provide: CategoryService, useValue: mockCategoryService },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        { provide: ConfirmDialogService, useValue: mockConfirmService },
       ],
     })
     .compileComponents();
@@ -152,26 +157,31 @@ describe('JournalComponent', () => {
   });
 
   it('should delete log and reload list', () => {
-    jest.spyOn(window, 'confirm').mockReturnValue(true);
+    mockConfirmService.open.mockReturnValue(of(true));
 
     const spy = jest.spyOn(component, 'loadLogs');
 
     component.onDelete(1);
 
-    expect(mockLogService.delete).toHaveBeenCalledWith(1);
+    expect(mockConfirmService.open).toHaveBeenCalled();
+
+    expect(mockLogService.delete)
+      .toHaveBeenCalledWith(1);
+
     expect(spy).toHaveBeenCalled();
   });
 
-  it('should not delete when confirm returns false', () => {
-    jest.spyOn(window, 'confirm').mockReturnValue(false);
+  it('should not delete when user cancels', () => {
+    mockConfirmService.open.mockReturnValue(of(false));
 
     component.onDelete(1);
 
-    expect(mockLogService.delete).not.toHaveBeenCalled();
+    expect(mockLogService.delete)
+      .not.toHaveBeenCalled();
   });
 
   it('should set error when delete fails', () => {
-    jest.spyOn(window, 'confirm').mockReturnValue(true);
+    mockConfirmService.open.mockReturnValue(of(true));
 
     mockLogService.delete.mockReturnValueOnce(
       throwError(() => new Error())
@@ -179,9 +189,8 @@ describe('JournalComponent', () => {
 
     component.onDelete(1);
 
-    expect(component.error$()).toBe(
-      'Erreur lors de la suppression.'
-    );
+    expect(component.error$())
+      .toBe('Erreur lors de la suppression.');
   });
 
   it('should format duration in minutes', () => {
