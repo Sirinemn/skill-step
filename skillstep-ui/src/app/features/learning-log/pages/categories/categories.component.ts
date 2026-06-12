@@ -129,4 +129,11 @@ export class CategoriesComponent implements OnInit {
     setTimeout(() => this.success$.set(null), 3000);
   }
 
+  getSuggestions(input: string): Category[] {
+    const normalized = input.trim().toLowerCase();
+    return this.categories$().filter(cat =>
+      cat.name.toLowerCase().includes(normalized) ||
+      normalized.includes(cat.name.toLowerCase())
+    );
+  }
 }
