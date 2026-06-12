@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { LearningLogService } from '../../service/learning-log.service';
 import { CategoryService } from '../../category/service/category.service';
 import { LearningLogRequest } from '../../models/learning-log-request.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-log-form',
@@ -28,11 +29,14 @@ export class LogFormComponent implements OnInit {
     private readonly route:          ActivatedRoute,
     private readonly logService:     LearningLogService,
     private readonly categoryService: CategoryService,
+    private readonly destroyRef:      DestroyRef
   ) {}
 
   ngOnInit(): void {
     this.initForm();
-    this.categoryService.loadAll().subscribe();
+    this.categoryService.loadAll()
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe();
 
     // Vérifie si on est en mode édition
     const id = this.route.snapshot.paramMap.get('id');
@@ -64,7 +68,9 @@ export class LogFormComponent implements OnInit {
     });
   }
   private loadLogForEdit(id: number): void {
-    this.logService.getById(id).subscribe({
+    this.logService.getById(id)
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
       next: log => {
         this.logForm.patchValue({
           title:       log.title,
@@ -90,7 +96,9 @@ export class LogFormComponent implements OnInit {
       ? this.logService.update(this.editLogId$()!, payload)
       : this.logService.create(payload);
 
-    request.subscribe({
+    request
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
       next: () => this.router.navigate(['/journal']),
       error: err => {
         this.isSaving$.set(false);

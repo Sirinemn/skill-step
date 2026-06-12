@@ -1,9 +1,10 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, OnInit, signal } from '@angular/core';
 import { CategoryService } from '../../category/service/category.service';
 import { ColorPalette } from '../../../../core/utils/color-palette';
 import { Category } from '../../category/models/category.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-categories',
@@ -29,7 +30,11 @@ export class CategoriesComponent implements OnInit {
 
   readonly availableColors: string[] = ColorPalette.colors;
 
-  constructor(private readonly categoryService: CategoryService) {}
+  constructor(
+    private readonly categoryService: CategoryService,
+    private readonly destroyRef: DestroyRef
+
+  ) {}
 
   ngOnInit(): void {
     this.categoryService.loadAll().subscribe({
@@ -48,7 +53,9 @@ export class CategoriesComponent implements OnInit {
     this.isCreating$.set(true);
     this.error$.set(null);
 
-    this.categoryService.createCategory({ name, color: null }).subscribe({
+    this.categoryService.createCategory({ name, color: null })
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
       next: () => {
         this.newCategoryName = '';
         this.isCreating$.set(false);
@@ -80,7 +87,9 @@ export class CategoriesComponent implements OnInit {
     this.categoryService.updateCategory(id, {
       name,
       color: this.editColor,
-    }).subscribe({
+    })
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
       next: () => {
         this.editingId$.set(null);
         this.showSuccess('Catégorie mise à jour !');
@@ -96,7 +105,9 @@ export class CategoriesComponent implements OnInit {
   onDelete(id: number): void {
     if (!confirm('Supprimer cette catégorie ?')) return;
 
-    this.categoryService.deleteCategory(id).subscribe({
+    this.categoryService.deleteCategory(id)
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
       next:  () => this.showSuccess('Catégorie supprimée.'),
       error: err => {
         this.error$.set(

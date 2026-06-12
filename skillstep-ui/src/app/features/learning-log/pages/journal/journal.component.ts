@@ -1,4 +1,4 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, OnInit, signal } from '@angular/core';
 import { LogFilters } from '../../models/log-filter.model';
 import { LearningLog } from '../../models/learning-log.model';
 import { LearningLogService } from '../../service/learning-log.service';
@@ -7,6 +7,7 @@ import { Page } from '../../models/page.model';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-journal',
@@ -43,11 +44,15 @@ export class JournalComponent implements OnInit {
   constructor(
     private readonly logService:      LearningLogService,
     private readonly categoryService: CategoryService,
+    private readonly destroyRef:      DestroyRef
   ) {}
 
   ngOnInit(): void {
     // Charge catégories et logs en parallèle
-    this.categoryService.loadAll().subscribe();
+    this.categoryService.loadAll()
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe();
+
     this.loadLogs();
   }
 
@@ -55,7 +60,9 @@ export class JournalComponent implements OnInit {
     this.isLoading$.set(true);
     this.error$.set(null);
 
-    this.logService.getAll(this.filters$()).subscribe({
+    this.logService.getAll(this.filters$())  
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
       next: (page: Page<LearningLog>) => {
         this.logs$.set(page.content);
         this.totalPages$.set(page.totalPages);
@@ -101,7 +108,9 @@ export class JournalComponent implements OnInit {
 
   onDelete(id: number): void {
     if (!confirm('Supprimer cet apprentissage ?')) return;
-    this.logService.delete(id).subscribe({
+    this.logService.delete(id)  
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
       next: () => this.loadLogs(),
       error: () => this.error$.set('Erreur lors de la suppression.'),
     });
