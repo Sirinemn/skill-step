@@ -67,6 +67,7 @@ public class LearningLogServiceImpl implements ILearningLogService {
         // 2. Le service assigne les champs que MapStruct ignore
         learningLog.setUser(userService.findById(userId));
         learningLog.setCategory(resolveCategory(request.getCategoryId(), userId));
+        learningLog.setTitle(normalizeName(learningLog.getTitle()));
 
         LearningLog saved = learningLogRepository.save(learningLog);
         log.info("Log créé : '{}' pour userId={}", saved.getTitle(), userId);
@@ -84,7 +85,7 @@ public class LearningLogServiceImpl implements ILearningLogService {
 
         Category category = resolveCategory(request.getCategoryId(), userId);
 
-        learningLog.setTitle(request.getTitle().trim());
+        learningLog.setTitle(normalizeName(request.getTitle()));
         learningLog.setDescription(request.getDescription());
         learningLog.setDurationMin(request.getDurationMin());
         learningLog.setLogDate(request.getLogDate());
@@ -130,5 +131,12 @@ public class LearningLogServiceImpl implements ILearningLogService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Catégorie", categoryId));
     }
-
+    private String normalizeName(String name) {
+        if (name == null) return "";
+        String normalized = name.trim().replaceAll("\\s+", " ");
+        // Capitalise uniquement la première lettre
+        if (normalized.isEmpty()) return normalized;
+        return Character.toUpperCase(normalized.charAt(0))
+                + normalized.substring(1).toLowerCase();
+    }
 }
