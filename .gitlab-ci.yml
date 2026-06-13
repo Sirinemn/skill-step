@@ -3,20 +3,27 @@ image: maven:3.9-eclipse-temurin-17
 stages:
   - build
   - test
+  - build-front
+  - test-front
 
 variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
-  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end"
+  MAVEN_OPTS:        "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  MAVEN_CLI_OPTS:    "--batch-mode --errors --fail-at-end"
   SPRING_PROFILES_ACTIVE: "test"
-  # ↓ le sous-dossier contenant le pom.xml
-  BUILD_DIR: "skillstep-api"
+  BUILD_DIR:         "skillstep-api"
+  FRONT_DIR:         "skillstep-ui"
 
+# ── Cache Maven ─────────────────────────────
 cache:
   key: "$CI_COMMIT_REF_SLUG"
   paths:
     - .m2/repository/
+    - $FRONT_DIR/node_modules/   
 
-build:
+# ════════════════════════════════════════════
+# BACKEND
+# ════════════════════════════════════════════
+backend-build:
   stage: build
   script:
     - cd $BUILD_DIR && mvn $MAVEN_CLI_OPTS compile
@@ -25,7 +32,7 @@ build:
     - main
     - develop
 
-test:
+backend-test:
   stage: test
   script:
     - cd $BUILD_DIR && mvn $MAVEN_CLI_OPTS test
@@ -35,6 +42,44 @@ test:
       junit: $BUILD_DIR/target/surefire-reports/TEST-*.xml
     paths:
       - $BUILD_DIR/target/surefire-reports/
+    expire_in: 1 week
+  only:
+    - merge_requests
+    - main
+    - develop
+
+# ════════════════════════════════════════════
+# FRONTEND
+# ════════════════════════════════════════════
+frontend-build:
+  stage: build-front
+  image: node:20-alpine       # image Node pour Angular
+  script:
+    - cd $FRONT_DIR
+    - npm ci                  # install propre depuis package-lock.json
+    - npm run build           # ng build --configuration production
+  artifacts:
+    paths:
+      - $FRONT_DIR/dist/
+    expire_in: 1 week
+  only:
+    - merge_requests
+    - main
+    - develop
+
+frontend-test:
+  stage: test-front
+  image: node:20-alpine
+  script:
+    - cd $FRONT_DIR
+    - npm ci
+    - npm test -- --watchAll=false --coverage
+  artifacts:
+    when: always
+    reports:
+      junit: $FRONT_DIR/coverage/junit.xml    # si jest-junit configuré
+    paths:
+      - $FRONT_DIR/coverage/
     expire_in: 1 week
   only:
     - merge_requests
