@@ -25,6 +25,17 @@ const config: Config = {
 
   testMatch: ['**/*.spec.ts'],
 
+  reporters: [
+    'default',                    // sortie console normale
+    ['jest-junit', {
+      outputDirectory: 'coverage',
+      outputName:      'junit.xml',
+      classNameTemplate: '{classname}',
+      titleTemplate:     '{title}',
+    }]
+  ],
+
+  collectCoverage: true,
   collectCoverageFrom: [
     'src/app/**/*.ts',
     '!src/app/**/*.routes.ts',
@@ -32,7 +43,7 @@ const config: Config = {
     '!src/main.ts',
   ],
 
-  coverageReporters: ['html', 'text-summary'],
+  coverageReporters: ['html', 'text-summary', 'lcov'],
 };
 
 export default config;
