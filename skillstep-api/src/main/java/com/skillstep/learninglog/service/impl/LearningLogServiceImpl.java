@@ -14,11 +14,13 @@ import com.skillstep.user.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -117,6 +119,54 @@ public class LearningLogServiceImpl implements ILearningLogService {
     @Transactional(readOnly = true)
     public long countByUserId(Long userId) {
         return learningLogRepository.countByUserId(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long sumDurationByUserId(Long userId) {
+        return learningLogRepository.sumDurationByUserId(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countLogsThisWeek(Long userId, LocalDate weekStart) {
+        return learningLogRepository.countLogsThisWeek(userId, weekStart);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<LocalDate> findDistinctLogDates(Long userId, LocalDate from) {
+        return learningLogRepository.findDistinctLogDates(userId, from);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DayActivityData> findActivityLast7Days(Long userId, LocalDate from) {
+        List<Object[]> rows = learningLogRepository.findActivityLast7Days(userId, from);
+        return rows.stream()
+                .map(row -> new DayActivityData(
+                        (LocalDate) row[0],
+                        ((Number)   row[1]).longValue(),
+                        ((Number)   row[2]).longValue()
+                ))
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CategoryStatsData> findTopCategories(Long userId, int limit) {
+        List<Object[]> rows = learningLogRepository.findTopCategories(
+                userId, PageRequest.of(0, limit)
+        );
+        return rows.stream()
+                .map(row -> new CategoryStatsData(
+                        ((Number) row[0]).longValue(),
+                        (String)  row[1],
+                        (String)  row[2],
+                        ((Number) row[3]).longValue(),
+                        ((Number) row[4]).longValue()
+                ))
+                .toList();
     }
 
     // ─── Méthodes privées ───────────────────────────────────
