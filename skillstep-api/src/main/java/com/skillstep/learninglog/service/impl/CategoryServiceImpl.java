@@ -131,6 +131,12 @@ public class CategoryServiceImpl implements ICategoryService {
         return categoryRepository.findByIdAndUserId(categoryId, userId);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public long countByUserId(Long userId) {
+        return categoryRepository.countByUserId(userId);
+    }
+
     // ─── Méthodes privées ───────────────────────────────────────
 
     private Category findEntityOwnedByUser(Long categoryId, Long userId) {

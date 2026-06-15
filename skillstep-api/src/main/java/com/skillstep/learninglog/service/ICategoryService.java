@@ -16,4 +16,7 @@ public interface ICategoryService {
     // Méthode interne utilisée par LearningLogService
     // pour résoudre une Category depuis son id
     Optional<Category> findEntityByIdAndUserId(Long categoryId, Long userId);
+
+    // Pour le dashboard — nombre de catégories actives de l'utilisateur
+    long countByUserId(Long userId);
 }
