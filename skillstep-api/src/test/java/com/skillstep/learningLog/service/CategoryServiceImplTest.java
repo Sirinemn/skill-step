@@ -5,7 +5,6 @@ import com.skillstep.learninglog.dto.CategoryRequest;
 import com.skillstep.learninglog.dto.CategoryResponse;
 import com.skillstep.learninglog.mapper.CategoryMapper;
 import com.skillstep.learninglog.repository.CategoryRepository;
-import com.skillstep.learninglog.service.ICategoryService;
 import com.skillstep.learninglog.service.ILearningLogService;
 import com.skillstep.learninglog.service.impl.CategoryServiceImpl;
 import com.skillstep.user.domain.User;
@@ -19,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -134,5 +134,34 @@ public class CategoryServiceImplTest {
         } catch (Exception e) {
             assert false; // on ne doit pas atteindre cette ligne
         }
+    }
+    @Test
+    void shouldNotDeleteCategoryInUse() {
+        when(categoryRepository.findByIdAndUserId(1L, 1L))
+                .thenReturn(java.util.Optional.of(categoryMock));
+        when(learningLogService.existsByCategoryId(1L))
+                .thenReturn(true);
+
+        try {
+            categoryService.delete(1L, 1L);
+            assert false; // on ne doit pas atteindre cette ligne
+        } catch (Exception e) {
+            assert e.getMessage().contains("Cette catégorie est utilisée par des apprentissages");
+        }
+    }
+    @Test
+    void shouldCountCategoriesByUser() {
+        when(categoryRepository.countByUserId(1L)).thenReturn(5L);
+        long count = categoryService.countByUserId(1L);
+        assert(count == 5L);
+    }
+    @Test
+    void shouldFindCategoryByIdAndUserId() {
+        when(categoryRepository.findByIdAndUserId(1L, 1L))
+                .thenReturn(Optional.of(categoryMock));
+
+        Optional<Category> categoryOpt = categoryService.findEntityByIdAndUserId(1L, 1L);
+        assert(categoryOpt.isPresent());
+        assert(categoryOpt.get().getName().equals("Java"));
     }
 }
