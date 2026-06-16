@@ -23,6 +23,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,8 +41,7 @@ public class LearningLogServiceImplTest {
     private LearningLogRepository learningLogRepository;
     @Mock
     private IUserService userService;
-    @Mock
-    private ICategoryService categoryService;
+
     @Mock
     private LearningLogMapper mapper;
     User userMock;
@@ -172,5 +173,61 @@ public class LearningLogServiceImplTest {
         long count = learningLogService.countByUserId(1L);
         // Then
         assertEquals(5L, count);
+    }
+    @Test
+    void shouldSumDurationByUserId() {
+        // Given
+        when(learningLogRepository.sumDurationByUserId(1L))
+                .thenReturn(300L);
+        // When
+        long sum = learningLogService.sumDurationByUserId(1L);
+        // Then
+        assertEquals(300L, sum);
+    }
+    @Test
+    void shouldCountLogsThisWeek() {
+        // Given
+        when(learningLogRepository.countLogsThisWeek(1L, null))
+                .thenReturn(3L);
+        // When
+        long count = learningLogService.countLogsThisWeek(1L, null);
+        // Then
+        assertEquals(3L, count);
+    }
+    @Test
+    void shouldFindDistinctLogDates() {
+        // Given
+        when(learningLogRepository.findDistinctLogDates(1L, null))
+                .thenReturn(List.of(LocalDate.now()));
+        // When
+        List<LocalDate> dates = learningLogService.findDistinctLogDates(1L, null);
+        // Then
+        assertEquals(1, dates.size());
+    }
+    @Test
+    void shouldFindActivityLast7Days() {
+        List<Object[]> rows = List.<Object[]>of(new Object[]{LocalDate.now(), 120L, 2L});
+        // Given
+        when(learningLogRepository.findActivityLast7Days(1L, null))
+                .thenReturn(rows);
+        // When
+        List<LearningLogServiceImpl.DayActivityData> activityData = learningLogService.findActivityLast7Days(1L, null);
+        // Then
+        assertEquals(1, activityData.size());
+        assertEquals(2L, activityData.get(0).logCount());
+        assertEquals(120L, activityData.get(0).totalMinutes());
+    }
+    @Test
+    void shouldFindTopCategories() {
+        List<Object[]> row = List.<Object[]>of(new Object[]{1L, "Category 1", "#FFFFFF", 300L, 5L});
+        // Given
+        when(learningLogRepository.findTopCategories(1L, PageRequest.of(0, 5)))
+                .thenReturn(row);
+        // When
+        List<LearningLogServiceImpl.CategoryStatsData> topCategories = learningLogService.findTopCategories(1L, 5);
+        // Then
+        assertEquals(1, topCategories.size());
+        assertEquals("Category 1", topCategories.get(0).categoryName());
+        assertEquals(300L, topCategories.get(0).totalMinutes());
     }
 }
