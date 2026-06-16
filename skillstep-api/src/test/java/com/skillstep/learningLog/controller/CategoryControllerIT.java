@@ -3,7 +3,6 @@ package com.skillstep.learningLog.controller;
 
 import com.skillstep.learninglog.controller.CategoryController;
 import com.skillstep.learninglog.domain.Category;
-import com.skillstep.learninglog.dto.CategoryRequest;
 import com.skillstep.learninglog.dto.CategoryResponse;
 import com.skillstep.learninglog.service.ICategoryService;
 import com.skillstep.user.domain.User;
