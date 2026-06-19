@@ -2,17 +2,17 @@ import { AfterViewInit, Component, computed, DestroyRef, ElementRef, OnInit, sig
 import { getDisplayName } from '../../../../core/models/user.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
-import { ActivityDay, KpiCard, RecentLog, TopCategory } from '../../../../core/models/dashboard.model';
 import { Chart } from 'chart.js';
 import { DashboardService } from '../../services/dashboard.service';
 import { LearningLogService } from '../../../learning-log/service/learning-log.service';
 import { DashboardStats } from '../../models/dashboard-stats.model';
 import { DayActivity } from '../../models/day-activity.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
