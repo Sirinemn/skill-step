@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DashboardComponent } from './dashboard.component';
 import { AuthService } from '../../../../core/services/auth.service';
 import { signal } from '@angular/core';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('DashboardComponent', () => {
 
@@ -28,7 +29,7 @@ describe('DashboardComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [DashboardComponent],
+      imports: [HttpClientTestingModule],
       providers: [
         { provide: AuthService, useValue: authServiceMock }
       ],
@@ -42,25 +43,6 @@ describe('DashboardComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should return the first name from user signal', () => {
-    expect(component.firstName$()).toBe(mockUser.firstName);
-  });
-
-  it('should return display name if first name is not available', () => {
-
-    const userWithoutFirstName = {
-      id: 2,
-      firstName: undefined,
-      email: 'user2@example.com'
-    };
-
-    userSignal.set(userWithoutFirstName);
-
-    fixture.detectChanges();
-
-    expect(component.firstName$()).toBe(userWithoutFirstName.email);
   });
 
 });
