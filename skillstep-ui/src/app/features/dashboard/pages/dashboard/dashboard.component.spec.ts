@@ -11,6 +11,7 @@ import { CategoryStats } from '../../models/category-stats.model';
 import { DashboardService } from '../../services/dashboard.service';
 import { LearningLogService } from '../../../learning-log/service/learning-log.service';
 import { registerLocaleData } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 registerLocaleData(localeFr);
 describe('DashboardComponent', () => {
@@ -37,6 +38,11 @@ describe('DashboardComponent', () => {
     activityLast7Days: dayActivity,
     topCategories: categoryStats
   }
+  const mockActivatedRoute = {
+    snapshot: {
+      queryParams: {},
+    },
+  };
 
   const mockUser = {
     id: 1,
@@ -69,6 +75,7 @@ describe('DashboardComponent', () => {
         { provide: DashboardService, useValue: dashboardServiceMock },
         { provide: LearningLogService, useValue: logServiceMock },
         { provide: DestroyRef, useValue: destroyRefMock },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: LOCALE_ID, useValue: 'fr' }
       ],
     }).compileComponents();
