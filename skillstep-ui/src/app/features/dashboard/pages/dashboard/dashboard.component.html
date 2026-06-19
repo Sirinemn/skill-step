@@ -1,270 +1,291 @@
-<!-- src/app/features/dashboard/pages/dashboard/dashboard.component.html -->
 <div class="p-4 md:p-8">
 
-  <!-- ══════════════════════════════════════════
-       EN-TÊTE — Salutation
-  ═══════════════════════════════════════════ -->
+  <!-- ── En-tête ──────────────────────────────── -->
   <div class="mb-6 md:mb-8">
     <h1 class="text-xl md:text-2xl font-bold
                text-text-heading dark:text-gray-100 mb-1">
       Bonjour {{ firstName$() }} 👋
     </h1>
-    <p class="text-sm">
-      <span class="border-b border-primary-300 dark:border-primary-700
-                   text-primary-500 dark:text-primary-400 cursor-pointer">
-        Voici un aperçu de ta progression et de tes apprentissages récents.
-      </span>
+    <p class="text-sm text-primary-500 dark:text-primary-400">
+      Voici un aperçu de ta progression et de tes apprentissages récents.
     </p>
   </div>
 
-  <!-- ══════════════════════════════════════════
-       KPI CARDS — 4 statistiques clés
-       1 col mobile → 2 col sm → 4 col lg
-  ═══════════════════════════════════════════ -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 md:mb-8">
-
-    <div
-      *ngFor="let kpi of kpiCards"
-      class="rounded-2xl border p-4 md:p-5
-            transition-shadow hover:shadow-card-hover"
-      [ngClass]="[kpi.bgLight, kpi.bgDark, kpi.borderLight, kpi.borderDark]">
-
-      <p class="text-xl md:text-2xl font-bold mb-1" [ngClass]="kpi.color">
-        {{ kpi.value }}
-      </p>
-      <p class="text-text-muted dark:text-gray-400 text-sm">
-        {{ kpi.label }}
-      </p>
+  <!-- ── Loader ───────────────────────────────── -->
+  <div *ngIf="isLoading$()"
+       class="flex items-center justify-center py-20">
+    <div class="w-10 h-10 border-4 border-primary-200
+                border-t-primary-500 rounded-full animate-spin">
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════
-       CONTENU PRINCIPAL — 2 colonnes
-       1 col mobile → 3 col lg
-  ═══════════════════════════════════════════ -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <!-- ── Erreur ───────────────────────────────── -->
+  <div *ngIf="error$() && !isLoading$()"
+       class="rounded-2xl border p-6 text-center
+              bg-red-50 dark:bg-red-950
+              border-red-200 dark:border-red-800
+              text-red-600 dark:text-red-300">
+    ❌ {{ error$() }}
+  </div>
 
-    <!-- ── COLONNE GAUCHE (2/3) ───────────── -->
-    <div class="lg:col-span-2 flex flex-col gap-4">
+  <!-- ── Contenu principal ────────────────────── -->
+  <ng-container *ngIf="!isLoading$() && !error$()">
 
-      <!-- Titre section -->
-      <h2 class="text-base font-semibold
-                 text-text-heading dark:text-gray-100">
-        Apprentissages récents
-      </h2>
-
-      <!-- Liste des logs récents -->
-      <div class="flex flex-col gap-3">
-        <div
-          *ngFor="let log of recentLogs"
-          class="flex items-start gap-3 p-4 rounded-2xl border
-                 cursor-pointer group transition-all duration-200
-                 bg-bg-surface  dark:bg-gray-800
-                 border-border-card dark:border-gray-700
-                 hover:shadow-card-hover dark:hover:shadow-none
-                 dark:hover:border-gray-600">
-
-          <!-- Barre colorée gauche -->
-          <div class="w-1 self-stretch rounded-full
-                      bg-primary-500 dark:bg-primary-400 shrink-0">
-          </div>
-
-          <div class="flex-1 min-w-0">
-            <!-- Titre du log -->
-            <p class="font-semibold text-sm truncate
-                      text-text-heading dark:text-gray-100
-                      group-hover:text-primary-500
-                      dark:group-hover:text-primary-400
-                      transition-colors">
-              {{ log.title }}
-            </p>
-            <!-- Date · Durée -->
-            <p class="text-xs mt-0.5
-                      text-text-muted dark:text-gray-500">
-              {{ log.date }} · {{ log.duration }}
-            </p>
-          </div>
-
-        </div>
+    <!-- ── KPI Cards ──────────────────────────── -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 md:mb-8">
+      <div
+        *ngFor="let kpi of kpiCards$()"
+        class="rounded-2xl border p-4 md:p-5
+               transition-shadow hover:shadow-card-hover"
+        [ngClass]="[kpi.bgLight, kpi.bgDark,
+                    kpi.borderLight, kpi.borderDark]">
+        <p class="text-xl md:text-2xl font-bold mb-1"
+           [ngClass]="kpi.color">
+          {{ kpi.value }}
+        </p>
+        <p class="text-text-muted dark:text-gray-400 text-sm">
+          {{ kpi.label }}
+        </p>
       </div>
-
-      <!-- ── CTA Rapport recruteur ───────── -->
-      <div class="rounded-2xl border p-5
-                  bg-primary-50  dark:bg-primary-950
-                  border-primary-100 dark:border-primary-900
-                  mt-2 dark:bg-gray-800">
-
-        <div class="flex items-start gap-4">
-
-          <!-- Icône PDF -->
-          <div class="w-10 h-10 rounded-xl shrink-0
-                      flex items-center justify-center text-xl
-                      bg-white dark:bg-gray-100
-                      shadow-card dark:shadow-none">
-            📄
-          </div>
-
-          <div class="flex-1">
-            <p class="font-semibold text-sm mb-1
-                      text-text-heading dark:text-gray-100">
-              Rapport recruteur
-            </p>
-            <p class="text-xs mb-3 leading-relaxed
-                      text-text-muted dark:text-gray-100">
-              Génère un PDF synthétique de tes apprentissages
-              pour mettre en valeur ta progression.
-            </p>
-            <button class="btn-primary text-sm px-5 py-2.5">
-              Générer mon PDF
-            </button>
-          </div>
-
-        </div>
-      </div>
-
     </div>
 
-    <!-- ── COLONNE DROITE (1/3) ───────────── -->
-    <div class="flex flex-col gap-4">
+    <!-- ── Streak badge ───────────────────────── -->
+    <div *ngIf="stats$()?.streakDays! > 0"
+         class="inline-flex items-center gap-2 px-4 py-2 mb-6
+                rounded-full text-sm font-medium
+                bg-amber-50 dark:bg-amber-950
+                border border-amber-200 dark:border-amber-800
+                text-amber-700 dark:text-amber-300">
+      🔥 {{ stats$()?.streakDays }} jour{{ stats$()?.streakDays! > 1 ? 's' : '' }}
+      de suite — continue comme ça !
+    </div>
 
-      <!-- Graphique — Activité 7 jours -->
-      <div class="rounded-2xl border p-5
-                  bg-bg-surface  dark:bg-gray-800
-                  border-border-card dark:border-gray-700">
+    <!-- ── Layout 2 colonnes ──────────────────── -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <p class="font-semibold text-sm mb-4
-                  text-text-heading dark:text-gray-100">
-          Activité — 7 jours
-        </p>
+      <!-- ── Colonne gauche (2/3) ──────────────── -->
+      <div class="lg:col-span-2 flex flex-col gap-4">
 
-        <!-- Barres du graphique -->
-        <div class="flex items-end justify-between gap-1 h-24 mb-2">
+        <!-- Apprentissages récents -->
+        <h2 class="text-base font-semibold
+                   text-text-heading dark:text-gray-100">
+          Apprentissages récents
+        </h2>
+
+        <!-- Empty state -->
+        <div *ngIf="!hasLogs$()"
+             class="rounded-2xl border border-dashed p-10 text-center
+                    border-border-card dark:border-gray-600
+                    bg-bg-surface dark:bg-gray-800/50">
+          <div class="w-16 h-16 rounded-2xl mx-auto mb-4
+                      flex items-center justify-center text-4xl
+                      bg-primary-50 dark:bg-primary-950">
+            📖
+          </div>
+          <h3 class="font-semibold text-text-heading dark:text-gray-100 mb-2">
+            Ton journal est vide pour l'instant
+          </h3>
+          <p class="text-text-muted dark:text-gray-400 text-sm mb-6
+                    max-w-xs mx-auto">
+            Commence par enregistrer ce que tu as appris aujourd'hui !
+          </p>
+          <a routerLink="/journal/new"
+             class="btn-primary text-sm px-6 py-2.5 inline-flex
+                    items-center gap-2">
+            + Ajouter mon premier apprentissage
+          </a>
+        </div>
+
+        <!-- Liste des logs récents -->
+        <div *ngIf="hasLogs$()" class="flex flex-col gap-3">
           <div
-            *ngFor="let day of activityDays"
-            class="flex flex-col items-center gap-1 flex-1">
-            <div
-              class="w-full rounded-t-md cursor-pointer
-                     transition-colors duration-200
-                     bg-primary-400  dark:bg-primary-600
-                     hover:bg-primary-500 dark:hover:bg-primary-500"
-              [style.height.px]="day.height">
+            *ngFor="let log of stats$()?.activityLast7Days?.slice(0,3)"
+            class="rounded-2xl border p-4 md:p-5
+                   transition-all duration-200 group cursor-pointer
+                   bg-bg-surface dark:bg-gray-800
+                   border-border-card dark:border-gray-700
+                   hover:shadow-card-hover dark:hover:border-gray-600">
+            <div class="flex items-start gap-3">
+              <div class="w-1 self-stretch rounded-full shrink-0
+                          bg-primary-500 dark:bg-primary-400">
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-semibold text-sm
+                           text-text-heading dark:text-gray-100
+                           group-hover:text-primary-500 transition-colors">
+                  {{ log.date | date:'dd MMM yyyy' : '' : 'fr' }}
+                </p>
+                <p class="text-xs text-text-muted dark:text-gray-500 mt-0.5">
+                  {{ log.logCount }} log{{ log.logCount > 1 ? 's' : '' }}
+                  · {{ formatDuration(log.totalMinutes) }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lien vers le journal complet -->
+          <a routerLink="/journal"
+             class="text-sm text-primary-500 dark:text-primary-400
+                    hover:text-primary-600 transition-colors
+                    text-center py-2 font-medium">
+            Voir tous les apprentissages →
+          </a>
+        </div>
+
+        <!-- CTA Rapport recruteur -->
+        <div class="rounded-2xl border p-5 mt-2
+                    bg-primary-50  dark:bg-primary-950
+                    border-primary-100 dark:border-primary-900">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl shrink-0
+                        flex items-center justify-center text-xl
+                        bg-white dark:bg-gray-800 shadow-card">
+              📄
+            </div>
+            <div class="flex-1">
+              <p class="font-semibold text-sm mb-1
+                         text-text-heading dark:text-gray-100">
+                Rapport recruteur
+              </p>
+              <p class="text-xs mb-3 leading-relaxed
+                         text-text-muted dark:text-gray-400">
+                Génère un PDF synthétique de tes apprentissages
+                pour mettre en valeur ta progression.
+              </p>
+              <a routerLink="/report"
+                 class="btn-primary text-sm px-5 py-2.5 inline-flex">
+                Générer mon PDF
+              </a>
             </div>
           </div>
         </div>
 
-        <!-- Labels des jours -->
-        <div class="flex justify-between gap-1">
-          <span
-            *ngFor="let day of activityDays"
-            class="flex-1 text-center text-xs
-                   text-text-muted dark:text-gray-500">
-            {{ day.day }}
-          </span>
-        </div>
-
       </div>
 
-      <!-- Top catégories -->
-      <div class="rounded-2xl border p-5
-                  bg-bg-surface  dark:bg-gray-800
-                  border-border-card dark:border-gray-700">
+      <!-- ── Colonne droite (1/3) ──────────────── -->
+      <div class="flex flex-col gap-4">
 
-        <p class="font-semibold text-sm mb-4
-                  text-text-heading dark:text-gray-100">
-          Top catégories
-        </p>
+        <!-- Graphique activité 7 jours -->
+        <div class="rounded-2xl border p-5
+                    bg-bg-surface dark:bg-gray-800
+                    border-border-card dark:border-gray-700">
 
-        <div class="flex flex-col gap-3">
-          <div *ngFor="let cat of topCategories">
+          <p class="font-semibold text-sm mb-4
+                     text-text-heading dark:text-gray-100">
+            Activité — 7 jours
+          </p>
 
-            <div class="flex justify-between items-center mb-1">
-              <span class="text-xs font-medium
-                           text-text-body dark:text-gray-300">
-                {{ cat.name }}
-              </span>
-              <span class="text-xs
-                           text-text-muted dark:text-gray-500">
-                {{ cat.percentage }}%
-              </span>
-            </div>
-
-            <!-- Barre de progression -->
-            <div class="h-2 rounded-full overflow-hidden
-                        bg-bg-hover dark:bg-gray-700">
+          <!-- Barres SVG dynamiques -->
+          <div class="flex items-end justify-between gap-1 mb-2"
+               style="height: 80px">
+            <div *ngFor="let day of stats$()?.activityLast7Days"
+                 class="flex flex-col items-center gap-1 flex-1"
+                 [title]="formatDuration(day.totalMinutes)">
               <div
-                class="h-full rounded-full transition-all duration-700"
-                [ngClass]="cat.color"
-                [style.width.%]="cat.percentage">
+                class="w-full rounded-t-md cursor-pointer
+                       transition-all duration-500
+                       bg-primary-400 dark:bg-primary-600
+                       hover:bg-primary-500 dark:hover:bg-primary-500"
+                [style.height.px]="getBarHeight(day)"
+                [class.opacity-20]="day.totalMinutes === 0">
               </div>
             </div>
-
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Derniers rapports -->
-      <div class="rounded-2xl border p-5
-                  bg-bg-surface  dark:bg-gray-800
-                  border-border-card dark:border-gray-700">
-
-        <p class="font-semibold text-sm mb-4
-                  text-text-heading dark:text-gray-100">
-          Derniers rapports
-        </p>
-
-        <div class="flex flex-col gap-4">
-
-          <!-- Rapport 1 -->
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-3">
-              <span class="text-lg">📋</span>
-              <div>
-                <p class="text-xs font-medium
-                           text-text-heading dark:text-gray-200">
-                  22 avr. 2026
-                </p>
-                <p class="text-xs text-text-muted dark:text-gray-500">
-                  30 jours
-                </p>
-              </div>
-            </div>
-            <button class="text-xs font-medium flex items-center gap-1
-                           text-primary-500 dark:text-primary-400
-                           hover:text-primary-600 dark:hover:text-primary-300
-                           transition-colors">
-              ↓ Télécharger
-            </button>
           </div>
 
-          <!-- Séparateur -->
-          <div class="border-t border-border-soft dark:border-gray-700"></div>
-
-          <!-- Rapport 2 -->
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-3">
-              <span class="text-lg">📋</span>
-              <div>
-                <p class="text-xs font-medium
-                           text-text-heading dark:text-gray-200">
-                  01 avr. 2026
-                </p>
-                <p class="text-xs text-text-muted dark:text-gray-500">
-                  7 jours
-                </p>
-              </div>
-            </div>
-            <button class="text-xs font-medium flex items-center gap-1
-                           text-primary-500 dark:text-primary-400
-                           hover:text-primary-600 dark:hover:text-primary-300
-                           transition-colors">
-              ↓ Télécharger
-            </button>
+          <!-- Labels jours -->
+          <div class="flex justify-between gap-1">
+            <span *ngFor="let day of stats$()?.activityLast7Days"
+                  class="flex-1 text-center text-xs
+                          text-text-muted dark:text-gray-500">
+              {{ day.day }}
+            </span>
           </div>
 
         </div>
+
+        <!-- Top catégories — barres de progression -->
+        <div class="rounded-2xl border p-5
+                    bg-bg-surface dark:bg-gray-800
+                    border-border-card dark:border-gray-700">
+
+          <p class="font-semibold text-sm mb-4
+                     text-text-heading dark:text-gray-100">
+            Top catégories
+          </p>
+
+          <!-- Empty state catégories -->
+          <p *ngIf="!stats$()?.topCategories?.length"
+             class="text-text-muted dark:text-gray-500 text-sm text-center py-4">
+            Aucune catégorie pour l'instant.
+          </p>
+
+          <div class="flex flex-col gap-3">
+            <div *ngFor="let cat of stats$()?.topCategories">
+              <div class="flex justify-between items-center mb-1">
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 rounded-full shrink-0"
+                       [style.background-color]="cat.color">
+                  </div>
+                  <span class="text-xs font-medium
+                               text-text-body dark:text-gray-300">
+                    {{ cat.name }}
+                  </span>
+                </div>
+                <span class="text-xs text-text-muted dark:text-gray-500">
+                  {{ cat.percentage }}%
+                </span>
+              </div>
+              <div class="h-2 rounded-full overflow-hidden
+                          bg-bg-hover dark:bg-gray-700">
+                <div
+                  class="h-full rounded-full transition-all duration-700"
+                  [style.width.%]="cat.percentage"
+                  [style.background-color]="cat.color">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Donut chart Chart.js -->
+          <div *ngIf="stats$()?.topCategories?.length"
+               class="mt-6 relative" style="height: 180px">
+            <canvas #donutCanvas></canvas>
+
+            <!-- Centre du donut — total -->
+            <div class="absolute inset-0 flex flex-col
+                        items-center justify-center
+                        pointer-events-none">
+              <p class="text-lg font-bold
+                         text-text-heading dark:text-gray-100">
+                {{ formatDuration(stats$()?.totalMinutes ?? 0) }}
+              </p>
+              <p class="text-xs text-text-muted dark:text-gray-500">
+                au total
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Derniers rapports -->
+        <div class="rounded-2xl border p-5
+                    bg-bg-surface dark:bg-gray-800
+                    border-border-card dark:border-gray-700">
+
+          <p class="font-semibold text-sm mb-4
+                     text-text-heading dark:text-gray-100">
+            Derniers rapports
+          </p>
+
+          <p class="text-text-muted dark:text-gray-500 text-xs text-center py-2">
+            Tes rapports PDF apparaîtront ici.
+          </p>
+
+        </div>
+
       </div>
 
     </div>
-  </div>
+  </ng-container>
+
 </div>
