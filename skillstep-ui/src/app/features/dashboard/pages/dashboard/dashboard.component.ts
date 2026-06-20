@@ -2,13 +2,12 @@ import { AfterViewInit, Component, computed, DestroyRef, ElementRef, OnInit, sig
 import { getDisplayName } from '../../../../core/models/user.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
-import { Chart } from 'chart.js';
 import { DashboardService } from '../../services/dashboard.service';
 import { LearningLogService } from '../../../learning-log/service/learning-log.service';
 import { DashboardStats } from '../../models/dashboard-stats.model';
 import { DayActivity } from '../../models/day-activity.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,19 +15,11 @@ import { RouterLink, RouterModule } from '@angular/router';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent implements OnInit, AfterViewInit{
-
-  // ── Références aux canvas Chart.js ──────────────────
-  @ViewChild('donutCanvas')
-  donutCanvasRef!: ElementRef<HTMLCanvasElement>;
-
-  private donutChart: Chart | null = null;
-
+export class DashboardComponent implements OnInit {
 
   constructor(
     private readonly authService: AuthService,
     private readonly dashboardService: DashboardService,
-    private readonly logService: LearningLogService,
     private readonly destroyRef: DestroyRef
     
   ) {}
@@ -114,67 +105,12 @@ export class DashboardComponent implements OnInit, AfterViewInit{
         next: stats => {
           this.stats$.set(stats);
           this.isLoading$.set(false);
-          // Initialise le donut après le rendu
-          setTimeout(() => this.initDonutChart(), 0);
         },
         error: () => {
           this.error$.set('Impossible de charger les statistiques.');
           this.isLoading$.set(false);
         },
       });
-  }
-
-  ngAfterViewInit(): void {
-    // Le chart est initialisé dans ngOnInit après réception des données
-  }
-
-  private initDonutChart(): void {
-    const stats = this.stats$();
-    if (!stats || !this.donutCanvasRef) return;
-    if (stats.topCategories.length === 0) return;
-
-    // Détruit le chart existant si on recharge les stats
-    if (this.donutChart) {
-      this.donutChart.destroy();
-    }
-
-    const ctx = this.donutCanvasRef.nativeElement.getContext('2d');
-    if (!ctx) return;
-
-    this.donutChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels:   stats.topCategories.map(c => c.name),
-        datasets: [{
-          data:            stats.topCategories.map(c => c.totalMinutes),
-          backgroundColor: stats.topCategories.map(c => c.color),
-          borderWidth:     2,
-          borderColor:     'transparent',
-          hoverOffset:     4,
-        }],
-      },
-      options: {
-        responsive:       true,
-        maintainAspectRatio: false,
-        cutout:           '70%',        // donut — trou au milieu
-        plugins: {
-          legend: { display: false },   // on a notre propre légende
-          tooltip: {
-            callbacks: {
-              label: (ctx) => {
-                const mins = ctx.raw as number;
-                return ` ${ctx.label} — ${DashboardService.formatDuration(mins)}`;
-              }
-            }
-          }
-        }
-      }
-    });
-  }
-
-  // Détruire le chart quand le composant est détruit
-  ngOnDestroy(): void {
-    this.donutChart?.destroy();
   }
 
 }

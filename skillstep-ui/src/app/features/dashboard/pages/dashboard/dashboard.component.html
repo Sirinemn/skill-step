@@ -1,7 +1,6 @@
-<!-- dashboard.component.html — version finale complète -->
 <div class="p-4 md:p-8">
 
-  <!-- ── En-tête salutation ──────────────────── -->
+  <!-- ── En-tête ──────────────────────────────── -->
   <div class="mb-6 md:mb-8">
     <h1 class="text-xl md:text-2xl font-bold
                text-text-heading dark:text-gray-100 mb-1">
@@ -16,7 +15,8 @@
   <div *ngIf="isLoading$()"
        class="flex items-center justify-center py-20">
     <div class="w-10 h-10 border-4 border-primary-200
-                border-t-primary-500 rounded-full animate-spin"></div>
+                border-t-primary-500 rounded-full animate-spin">
+    </div>
   </div>
 
   <!-- ── Erreur ───────────────────────────────── -->
@@ -28,11 +28,11 @@
     ❌ {{ error$() }}
   </div>
 
-  <!-- ── Contenu principal ────────────────────── -->
+  <!-- ── Contenu ──────────────────────────────── -->
   <ng-container *ngIf="!isLoading$() && !error$()">
 
     <!-- ── KPI Cards ──────────────────────────── -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
       <div
         *ngFor="let kpi of kpiCards$()"
         class="rounded-2xl border p-4 md:p-5
@@ -50,32 +50,30 @@
     </div>
 
     <!-- ── Streak badge ───────────────────────── -->
-    <div *ngIf="stats$()?.streakDays! > 0"
-         class="inline-flex items-center gap-2 px-4 py-2 mb-6
-                rounded-full text-sm font-medium
-                bg-amber-50 dark:bg-amber-950
-                border border-amber-200 dark:border-amber-800
-                text-amber-700 dark:text-amber-300">
-      🔥 {{ stats$()?.streakDays }}
-      jour{{ stats$()?.streakDays! > 1 ? 's' : '' }}
-      de suite — continue comme ça !
+    <div class="mb-6" [class.invisible]="!stats$()?.streakDays">
+      <span class="inline-flex items-center gap-2 px-4 py-2
+                   rounded-full text-sm font-medium
+                   bg-amber-50 dark:bg-amber-950
+                   border border-amber-200 dark:border-amber-800
+                   text-amber-700 dark:text-amber-300">
+        🔥 {{ stats$()?.streakDays }}
+        jour{{ stats$()?.streakDays! > 1 ? 's' : '' }}
+        de suite — continue comme ça !
+      </span>
     </div>
 
-    <!-- ══════════════════════════════════════════
-         TITRE commun aux 2 colonnes — EN DEHORS
-         de la grille pour aligner parfaitement
-    ═══════════════════════════════════════════ -->
+    <!-- ── Titre aligné avant la grille ─────── -->
     <h2 class="text-base font-semibold mb-3
                text-text-heading dark:text-gray-100">
       Apprentissages récents
     </h2>
 
-    <!-- ── Grid 2 colonnes — items-start ─────── -->
+    <!-- ── Grid 2 colonnes ───────────────────── -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
-      <!-- ════════════════════════════════════════
+      <!-- ════════════════════════════════════
            COLONNE GAUCHE (2/3)
-      ═══════════════════════════════════════════ -->
+      ════════════════════════════════════ -->
       <div class="lg:col-span-2 flex flex-col gap-4">
 
         <!-- Empty state -->
@@ -103,9 +101,10 @@
           </a>
         </div>
 
-        <!-- Liste activité 7 jours (jours avec des logs) -->
+        <!-- Logs récents par jour -->
         <div *ngIf="hasLogs$()" class="flex flex-col gap-3">
-          <ng-container *ngFor="let day of stats$()?.activityLast7Days">
+          <ng-container
+            *ngFor="let day of stats$()?.activityLast7Days">
             <div *ngIf="day.logCount > 0"
                  class="rounded-2xl border p-4
                         transition-all duration-200 group
@@ -114,18 +113,19 @@
                         hover:shadow-card-hover
                         dark:hover:border-gray-600">
               <div class="flex items-center gap-3">
-                <div class="w-1 self-stretch rounded-full shrink-0
-                            bg-primary-500 dark:bg-primary-400 min-h-8">
+                <div class="w-1 self-stretch min-h-8 rounded-full
+                            shrink-0 bg-primary-500 dark:bg-primary-400">
                 </div>
                 <div class="flex-1 min-w-0">
                   <p class="font-semibold text-sm
                              text-text-heading dark:text-gray-100
                              group-hover:text-primary-500
                              dark:group-hover:text-primary-400
-                             transition-colors">
+                             transition-colors capitalize">
                     {{ day.date | date:'EEEE d MMMM' : '' : 'fr' }}
                   </p>
-                  <p class="text-xs text-text-muted dark:text-gray-500 mt-0.5">
+                  <p class="text-xs text-text-muted
+                             dark:text-gray-500 mt-0.5">
                     {{ day.logCount }}
                     log{{ day.logCount > 1 ? 's' : '' }}
                     · {{ formatDuration(day.totalMinutes) }}
@@ -133,30 +133,30 @@
                 </div>
                 <a [routerLink]="['/journal']"
                    [queryParams]="{ from: day.date, to: day.date }"
-                   class="text-xs text-primary-500 dark:text-primary-400
-                          hover:underline shrink-0">
+                   class="text-xs font-medium shrink-0
+                          text-primary-500 dark:text-primary-400
+                          hover:text-primary-600 transition-colors">
                   Voir →
                 </a>
               </div>
             </div>
           </ng-container>
 
-          <!-- Lien journal complet -->
           <a routerLink="/journal"
-             class="text-sm text-primary-500 dark:text-primary-400
-                    hover:text-primary-600 transition-colors
-                    text-center py-2 font-medium">
+             class="text-sm font-medium text-center py-2
+                    text-primary-500 dark:text-primary-400
+                    hover:text-primary-600 transition-colors">
             Voir tous les apprentissages →
           </a>
         </div>
 
-        <!-- CTA Rapport recruteur -->
+        <!-- CTA Rapport PDF -->
         <div class="rounded-2xl border p-5
                     bg-primary-50  dark:bg-primary-950
                     border-primary-100 dark:border-primary-900">
           <div class="flex items-start gap-4">
-            <div class="w-10 h-10 rounded-xl shrink-0
-                        flex items-center justify-center text-xl
+            <div class="w-10 h-10 rounded-xl shrink-0 text-xl
+                        flex items-center justify-center
                         bg-white dark:bg-gray-800 shadow-card">
               📄
             </div>
@@ -180,9 +180,9 @@
 
       </div>
 
-      <!-- ════════════════════════════════════════
+      <!-- ════════════════════════════════════
            COLONNE DROITE (1/3)
-      ═══════════════════════════════════════════ -->
+      ════════════════════════════════════ -->
       <div class="flex flex-col gap-4">
 
         <!-- Activité 7 jours -->
@@ -195,28 +195,23 @@
             Activité — 7 jours
           </p>
 
-          <!-- Barres dynamiques normalisées -->
           <div class="flex items-end justify-between gap-1 mb-2"
                style="height: 80px">
             <div
               *ngFor="let day of stats$()?.activityLast7Days"
-              class="flex flex-col items-center flex-1"
+              class="flex-1 rounded-t-md cursor-pointer
+                     transition-all duration-700"
+              [style.height.px]="day.totalMinutes > 0
+                                   ? getBarHeight(day) : 3"
+              [style.background-color]="day.totalMinutes > 0
+                ? 'var(--color-primary)' : undefined"
+              [class.bg-gray-200]="day.totalMinutes === 0"
+              [class.dark:bg-gray-700]="day.totalMinutes === 0"
+              [class.opacity-40]="day.totalMinutes === 0"
               [title]="day.date + ' — ' + formatDuration(day.totalMinutes)">
-              <div
-                class="w-full rounded-t-md transition-all duration-700
-                       cursor-pointer"
-                [style.height.px]="getBarHeight(day)"
-                [class.bg-primary-400]="day.totalMinutes > 0"
-                [class.dark:bg-primary-600]="day.totalMinutes > 0"
-                [class.hover:bg-primary-500]="day.totalMinutes > 0"
-                [class.bg-gray-200]="day.totalMinutes === 0"
-                [class.dark:bg-gray-700]="day.totalMinutes === 0"
-                [style.min-height]="day.totalMinutes === 0 ? '3px' : null">
-              </div>
             </div>
           </div>
 
-          <!-- Labels jours -->
           <div class="flex justify-between gap-1">
             <span
               *ngFor="let day of stats$()?.activityLast7Days"
@@ -228,7 +223,7 @@
 
         </div>
 
-        <!-- Top catégories avec donut -->
+        <!-- Top catégories — barres enrichies SANS donut -->
         <div class="rounded-2xl border p-5
                     bg-bg-surface dark:bg-gray-800
                     border-border-card dark:border-gray-700">
@@ -239,30 +234,49 @@
           </p>
 
           <!-- Empty state -->
-          <p *ngIf="!stats$()?.topCategories?.length"
-             class="text-text-muted dark:text-gray-500
-                    text-sm text-center py-4">
-            Aucune catégorie pour l'instant.
-          </p>
+          <div *ngIf="!stats$()?.topCategories?.length"
+               class="text-center py-4">
+            <p class="text-text-muted dark:text-gray-500 text-sm">
+              Aucune catégorie pour l'instant.
+            </p>
+            <a routerLink="/categories"
+               class="text-xs text-primary-500 dark:text-primary-400
+                      hover:underline mt-1 inline-block">
+              Créer une catégorie →
+            </a>
+          </div>
 
-          <!-- Barres de progression -->
+          <!-- Barres enrichies : nom + durée + pourcentage -->
           <div *ngIf="stats$()?.topCategories?.length"
-               class="flex flex-col gap-3 mb-5">
+               class="flex flex-col gap-4">
             <div *ngFor="let cat of stats$()?.topCategories">
-              <div class="flex justify-between items-center mb-1">
-                <div class="flex items-center gap-2">
-                  <div class="w-3 h-3 rounded-full shrink-0"
-                       [style.background-color]="cat.color"></div>
-                  <span class="text-xs font-medium
-                               text-text-body dark:text-gray-300 truncate
-                               max-w-24">
+
+              <!-- Ligne nom + durée + % -->
+              <div class="flex items-center justify-between mb-1.5">
+                <div class="flex items-center gap-2 min-w-0">
+                  <!-- Pastille couleur -->
+                  <div class="w-2.5 h-2.5 rounded-full shrink-0"
+                       [style.background-color]="cat.color">
+                  </div>
+                  <!-- Nom de la catégorie -->
+                  <span class="text-xs font-medium truncate
+                               text-text-body dark:text-gray-300">
                     {{ cat.name }}
                   </span>
                 </div>
-                <span class="text-xs text-text-muted dark:text-gray-500 ml-2">
-                  {{ cat.percentage }}%
-                </span>
+                <!-- Durée + pourcentage -->
+                <div class="flex items-center gap-2 shrink-0 ml-2">
+                  <span class="text-xs text-text-muted dark:text-gray-500">
+                    {{ formatDuration(cat.totalMinutes) }}
+                  </span>
+                  <span class="text-xs font-semibold w-8 text-right"
+                        [style.color]="cat.color">
+                    {{ cat.percentage }}%
+                  </span>
+                </div>
               </div>
+
+              <!-- Barre de progression -->
               <div class="h-2 rounded-full overflow-hidden
                           bg-bg-hover dark:bg-gray-700">
                 <div class="h-full rounded-full transition-all duration-700"
@@ -270,26 +284,23 @@
                      [style.background-color]="cat.color">
                 </div>
               </div>
-            </div>
-          </div>
 
-          <!-- Donut Chart.js -->
-          <div *ngIf="stats$()?.topCategories?.length"
-               class="relative mx-auto" style="height: 160px; width: 160px">
-            <canvas #donutCanvas></canvas>
-            <!-- Total au centre -->
-            <div class="absolute inset-0 flex flex-col
-                        items-center justify-center pointer-events-none">
-              <p class="text-sm font-bold
-                         text-text-heading dark:text-gray-100 leading-tight">
+            </div>
+
+            <!-- Total en bas -->
+            <div class="pt-3 mt-1 border-t
+                        border-border-soft dark:border-gray-700
+                        flex items-center justify-between">
+              <span class="text-xs text-text-muted dark:text-gray-500">
+                Total
+              </span>
+              <span class="text-xs font-semibold
+                           text-text-heading dark:text-gray-200">
                 {{ formatDuration(stats$()?.totalMinutes ?? 0) }}
-              </p>
-              <p class="text-xs text-text-muted dark:text-gray-500">
-                au total
-              </p>
+              </span>
             </div>
-          </div>
 
+          </div>
         </div>
 
         <!-- Derniers rapports -->
