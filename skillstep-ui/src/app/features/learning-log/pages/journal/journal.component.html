@@ -177,7 +177,9 @@
             </span>
             <span *ngIf="log.category"
                   class="inline-flex items-center gap-1
-                         px-2 py-0.5 rounded-full text-xs font-medium"
+                         px-2 py-0.5 rounded-full text-xs font-medium
+                         max-w-32 truncate"
+                  [title]="log.category.name"
                   [style.background-color]="log.category.color + '20'"
                   [style.color]="log.category.color">
               {{ log.category.name }}

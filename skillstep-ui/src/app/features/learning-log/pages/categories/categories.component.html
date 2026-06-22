@@ -48,6 +48,9 @@
         (keydown.enter)="onCreate()"
         maxlength="100"
       />
+      <p class="text-xs text-text-muted dark:text-gray-500 text-right mt-1">
+            {{ newCategoryName?.length }} / 100
+      </p>
       <button
         (click)="onCreate()"
         [disabled]="!newCategoryName.trim() || isCreating$()"
@@ -121,8 +124,10 @@
              [style.background-color]="cat.color">
         </div>
 
-        <span class="flex-1 font-medium text-sm
-                     text-text-heading dark:text-gray-100">
+        <span class="flex-1 font-medium text-sm 
+                     text-text-heading dark:text-gray-100
+                     truncate max-w-xs"                    
+                     [title]="cat.name">
           {{ cat.name }}
         </span>
 
