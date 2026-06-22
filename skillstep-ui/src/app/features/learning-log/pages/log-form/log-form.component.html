@@ -123,7 +123,7 @@
                    dark:text-gray-100">
             <option [ngValue]="null">Sans catégorie</option>
             <option *ngFor="let cat of categories$()" [ngValue]="cat.id">
-              {{ cat.name }}
+              {{ truncateName(cat.name) }}
             </option>
           </select>
 
