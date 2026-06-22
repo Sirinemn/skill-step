@@ -128,5 +128,11 @@ export class LogFormComponent implements OnInit {
   // Getter pratiques pour les validations dans le template
   get titleErrors() { return this.logForm.get('title'); }
   get durationErrors() { return this.logForm.get('durationMin'); }
+ 
+  truncateName(name: string, maxLength: number = 40): string {
+    return name.length > maxLength
+      ? name.substring(0, maxLength) + '...'
+      : name;
+  }
 
 }
