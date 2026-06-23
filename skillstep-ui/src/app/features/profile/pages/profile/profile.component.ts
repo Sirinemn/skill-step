@@ -77,10 +77,20 @@ export class ProfileComponent {
     this.userService.updateProfile(payload)
     .pipe(takeUntilDestroyed(this.destroyRef))
     .subscribe({
-      next: () => {
+      next: (updatedUser) => {
         this.isSaving.set(false);
         this.isEditing.set(false);
         this.saveSuccess.set(true);
+
+      // les valeurs normalisées retournées par l'API
+      // Ainsi l'affichage reflète immédiatement ce qui est en base
+        this.profileForm.patchValue({
+          headline:    updatedUser.headline    ?? '',
+          bio:         updatedUser.bio         ?? '',
+          targetRole:  updatedUser.targetRole  ?? '',
+          linkedinUrl: updatedUser.linkedinUrl ?? '',
+          githubUrl:   updatedUser.githubUrl   ?? '',
+        });
         // Cache le message de succès après 3 secondes
         setTimeout(() => this.saveSuccess.set(false), 3000);
       },
