@@ -37,7 +37,7 @@ export class AuthService {
   }
 
   // Appelé par la page callback après redirection Google
-  handleCallback(token: string): void {
+  handleCallback(token: string): void { 
     this.saveToken(token);
     this.fetchCurrentUser().subscribe({
       next: () => this.router.navigate(['/dashboard']),
