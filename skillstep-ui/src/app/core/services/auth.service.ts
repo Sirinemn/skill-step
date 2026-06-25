@@ -41,7 +41,8 @@ export class AuthService {
     this.saveToken(token);
     this.fetchCurrentUser().subscribe({
       next: () => this.router.navigate(['/dashboard']),
-      error: () => {
+      error: err => {
+        console.log(err)
         this.logout();
         this.router.navigate(['/']);
       }
