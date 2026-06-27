@@ -1,9 +1,6 @@
 package com.skillstep.report.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -11,6 +8,7 @@ import java.time.LocalDate;
 @Setter
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class ReportRequest {
     // Période prédéfinie : 7, 30, 90 — null si période personnalisée
     private Integer period;
