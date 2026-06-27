@@ -52,8 +52,8 @@ public class ReportServiceImpl implements IReportService {
         var user = userService.findById(userId);
 
         // Tous les logs de la période, sans pagination
-        var logsPage = learningLogService.findAll(
-                userId, null, from, to, null,
+        var logsPage = learningLogService.findByDateRange(
+                userId, from, to,
                 PageRequest.of(0, 1000, Sort.by("logDate").descending())
         );
         List<LearningLogResponse> logs = logsPage.getContent();
