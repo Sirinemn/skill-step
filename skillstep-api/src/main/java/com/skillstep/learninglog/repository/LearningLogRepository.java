@@ -97,4 +97,18 @@ public interface LearningLogRepository extends JpaRepository<LearningLog, Long> 
     """)
     List<LocalDate> findDistinctLogDates(@Param("userId") Long userId,
                                          @Param("from")   LocalDate from);
+    @Query("""
+    SELECT l FROM LearningLog l
+    LEFT JOIN FETCH l.category
+    WHERE l.user.id  = :userId
+      AND l.logDate >= :from
+      AND l.logDate <= :to
+    ORDER BY l.logDate DESC, l.createdAt DESC
+    """)
+    Page<LearningLog> findByUserAndDateRange(
+            @Param("userId") Long      userId,
+            @Param("from")   LocalDate from,
+            @Param("to")     LocalDate to,
+            Pageable         pageable
+    );
 }
