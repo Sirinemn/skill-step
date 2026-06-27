@@ -51,4 +51,8 @@ public interface ILearningLogService {
             long   totalMinutes,
             long   logCount
     ) {}
+    Page<LearningLogResponse> findByDateRange(Long userId,
+                                              LocalDate from,
+                                              LocalDate to,
+                                              Pageable pageable);
 }

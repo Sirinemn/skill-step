@@ -189,4 +189,14 @@ public class LearningLogServiceImpl implements ILearningLogService {
         return Character.toUpperCase(normalized.charAt(0))
                 + normalized.substring(1).toLowerCase();
     }
+    @Override
+    @Transactional(readOnly = true)
+    public Page<LearningLogResponse> findByDateRange(Long userId,
+                                                     LocalDate from,
+                                                     LocalDate to,
+                                                     Pageable pageable) {
+        return learningLogRepository
+                .findByUserAndDateRange(userId, from, to, pageable)
+                .map(mapper::toResponse);
+    }
 }
