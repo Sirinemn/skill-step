@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        /* ── Reset et base ── */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+          font-family: Arial, Helvetica, sans-serif;
+          font-size: 11px;
+          color: #1A1A2E;
+          line-height: 1.5;
+        }
+
+        /* ── Header du rapport ── */
+        .header {
+          background: #6C63FF;
+          color: white;
+          padding: 28px 36px;
+          margin-bottom: 28px;
+        }
+
+        .header-top {
+          display: block;
+          margin-bottom: 16px;
+        }
+
+        .app-name {
+          font-size: 14px;
+          font-weight: bold;
+          opacity: 0.85;
+          letter-spacing: 1px;
+        }
+
+        .report-title {
+          font-size: 22px;
+          font-weight: bold;
+          margin-bottom: 4px;
+        }
+
+        .report-subtitle {
+          font-size: 11px;
+          opacity: 0.8;
+        }
+
+        .header-meta {
+          margin-top: 12px;
+          font-size: 10px;
+          opacity: 0.75;
+        }
+
+        /* ── Sections ── */
+        .section {
+          padding: 0 36px;
+          margin-bottom: 24px;
+        }
+
+        .section-title {
+          font-size: 13px;
+          font-weight: bold;
+          color: #6C63FF;
+          border-bottom: 1.5px solid #6C63FF;
+          padding-bottom: 5px;
+          margin-bottom: 14px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        /* ── Profil ── */
+        .profile-grid {
+          display: block;
+        }
+
+        .profile-name {
+          font-size: 16px;
+          font-weight: bold;
+          margin-bottom: 3px;
+        }
+
+        .profile-role {
+          font-size: 12px;
+          color: #6C63FF;
+          font-weight: bold;
+          margin-bottom: 8px;
+        }
+
+        .profile-bio {
+          font-size: 10px;
+          color: #4B5563;
+          line-height: 1.6;
+          margin-bottom: 10px;
+        }
+
+        .profile-links {
+          font-size: 10px;
+          color: #6C63FF;
+        }
+
+        .profile-links span {
+          margin-right: 16px;
+        }
+
+        /* ── Stats KPI ── */
+        .stats-grid {
+          display: block;
+        }
+
+        .stats-row {
+          display: block;
+          margin-bottom: 8px;
+        }
+
+        .kpi-box {
+          display: inline-block;
+          width: 23%;
+          background: #F8F9FF;
+          border: 1px solid #E5E7EB;
+          border-radius: 8px;
+          padding: 12px 10px;
+          text-align: center;
+          margin-right: 1.5%;
+          vertical-align: top;
+        }
+
+        .kpi-value {
+          font-size: 18px;
+          font-weight: bold;
+          color: #6C63FF;
+          display: block;
+        }
+
+        .kpi-label {
+          font-size: 9px;
+          color: #9CA3AF;
+          margin-top: 2px;
+        }
+
+        /* ── Catégories ── */
+        .category-row {
+          margin-bottom: 10px;
+        }
+
+        .category-header {
+          display: block;
+          margin-bottom: 3px;
+        }
+
+        .category-name {
+          font-weight: bold;
+          font-size: 10px;
+        }
+
+        .category-meta {
+          font-size: 9px;
+          color: #9CA3AF;
+          float: right;
+        }
+
+        .progress-bg {
+          background: #F3F4F6;
+          border-radius: 4px;
+          height: 6px;
+          width: 100%;
+          display: block;
+        }
+
+        .progress-fill {
+          height: 6px;
+          border-radius: 4px;
+          display: block;
+        }
+
+        /* ── Logs ── */
+        .log-item {
+          border-left: 3px solid #6C63FF;
+          padding: 8px 12px;
+          margin-bottom: 10px;
+          background: #F8F9FF;
+          border-radius: 0 6px 6px 0;
+        }
+
+        .log-title {
+          font-weight: bold;
+          font-size: 11px;
+          margin-bottom: 3px;
+        }
+
+        .log-meta {
+          font-size: 9px;
+          color: #9CA3AF;
+          margin-bottom: 4px;
+        }
+
+        .log-description {
+          font-size: 10px;
+          color: #4B5563;
+          line-height: 1.5;
+        }
+
+        .log-category-badge {
+          display: inline-block;
+          padding: 1px 7px;
+          border-radius: 10px;
+          font-size: 9px;
+          font-weight: bold;
+          margin-top: 4px;
+        }
+
+        /* ── Footer ── */
+        .footer {
+          margin-top: 32px;
+          padding: 14px 36px;
+          border-top: 1px solid #E5E7EB;
+          text-align: center;
+          font-size: 9px;
+          color: #9CA3AF;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     HEADER
+══════════════════════════════════ -->
+<div class="header">
+    <div class="header-top">
+        <span class="app-name">🚀 SKILL-STEP</span>
+    </div>
+    <div class="report-title">
+        Rapport d'apprentissage
+    </div>
+    <div class="report-subtitle">
+        Période : <span th:text="${#temporals.format(report.periodFrom, 'd MMM yyyy')}"></span>
+        — <span th:text="${#temporals.format(report.periodTo, 'd MMM yyyy')}"></span>
+    </div>
+    <div class="header-meta">
+        Généré le <span th:text="${report.generatedAt}"></span>
+        par <span th:text="${report.user.firstName + ' ' + report.user.lastName}"></span>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════
+     PROFIL
+══════════════════════════════════ -->
+<div class="section">
+    <div class="section-title">Profil</div>
+    <div class="profile-grid">
+        <div class="profile-name"
+             th:text="${report.user.firstName + ' ' + report.user.lastName}">
+        </div>
+        <div class="profile-role"
+             th:text="${report.user.targetRole ?: 'Apprenant passionné'}">
+        </div>
+        <div class="profile-bio"
+             th:if="${report.user.bio}"
+             th:text="${report.user.bio}">
+        </div>
+        <div class="profile-links">
+        <span th:if="${report.user.linkedinUrl}">
+          🔗 <span th:text="${report.user.linkedinUrl}"></span>
+        </span>
+            <span th:if="${report.user.githubUrl}">
+          💻 <span th:text="${report.user.githubUrl}"></span>
+        </span>
+            <span th:text="${report.user.email}">
+        </span>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════
+     STATISTIQUES
+══════════════════════════════════ -->
+<div class="section">
+    <div class="section-title">Statistiques de la période</div>
+    <div class="stats-row">
+        <div class="kpi-box">
+            <span class="kpi-value" th:text="${report.totalLogs}"></span>
+            <div class="kpi-label">Apprentissages</div>
+        </div>
+        <div class="kpi-box">
+            <span class="kpi-value" th:text="${report.totalDuration}"></span>
+            <div class="kpi-label">Temps total</div>
+        </div>
+        <div class="kpi-box">
+            <span class="kpi-value" th:text="${report.activeDays}"></span>
+            <div class="kpi-label">Jours actifs</div>
+        </div>
+        <div class="kpi-box">
+        <span class="kpi-value"
+              th:text="${#numbers.formatDecimal(report.avgMinutesPerDay, 1, 0) + ' min'}">
+        </span>
+            <div class="kpi-label">Moyenne / jour</div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════
+     TOP CATÉGORIES
+══════════════════════════════════ -->
+<div class="section" th:if="${not #lists.isEmpty(report.topCategories)}">
+    <div class="section-title">Technologies &amp; catégories</div>
+    <div th:each="cat : ${report.topCategories}" class="category-row">
+        <div class="category-header">
+            <span class="category-name" th:text="${cat.name}"></span>
+            <span class="category-meta">
+          <span th:text="${cat.percentage}"></span>%
+          · <span th:text="${cat.logCount}"></span> log(s)
+        </span>
+        </div>
+        <span class="progress-bg">
+        <span class="progress-fill"
+              th:style="'width: ' + ${cat.percentage} + '%; background-color: ' + ${cat.color} + ';'">
+        </span>
+      </span>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════
+     LISTE DES APPRENTISSAGES
+══════════════════════════════════ -->
+<div class="section">
+    <div class="section-title">
+        Apprentissages
+        (<span th:text="${report.totalLogs}"></span>)
+    </div>
+
+    <div th:if="${#lists.isEmpty(report.logs)}"
+         style="color: #9CA3AF; font-size: 10px; text-align: center; padding: 20px 0">
+        Aucun apprentissage sur cette période.
+    </div>
+
+    <div th:each="log : ${report.logs}" class="log-item">
+        <div class="log-title" th:text="${log.title}"></div>
+        <div class="log-meta">
+            <span th:text="${#temporals.format(log.logDate, 'd MMM yyyy')}"></span>
+            · <span th:text="${log.durationMin}"></span> min
+            <span th:if="${log.resourceUrl}">
+          · <span th:text="${log.resourceUrl}"></span>
+        </span>
+        </div>
+        <div th:if="${log.description}"
+             class="log-description"
+             th:text="${log.description}">
+        </div>
+        <div th:if="${log.category != null}">
+        <span class="log-category-badge"
+              th:text="${log.category.name}"
+              th:style="'background-color: ' + ${log.category.color} + '20; color: ' + ${log.category.color} + ';'">
+        </span>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════
+     FOOTER
+══════════════════════════════════ -->
+<div class="footer">
+    Rapport généré par Skill-Step —
+    <span th:text="${report.generatedAt}"></span> —
+    <span th:text="${report.user.email}"></span>
+</div>
+
+</body>
+</html>
