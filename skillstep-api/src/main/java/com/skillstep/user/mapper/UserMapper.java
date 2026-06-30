@@ -10,11 +10,7 @@ public interface UserMapper {
 
     UserProfileResponse toProfileResponse(User user);
 
-    // UpdateProfileRequest → User (mise à jour partielle)
-    // NullValuePropertyMappingStrategy.IGNORE = si un champ est null
-    // dans le DTO, on ne l'écrase pas en base (PATCH sémantique)
-    @BeanMapping(nullValuePropertyMappingStrategy =
-            NullValuePropertyMappingStrategy.IGNORE)
+    // MapStruct mappe tous les champs y compris les nulls
     void updateUserFromRequest(UpdateProfileRequest request,
                                @MappingTarget User user);
 }
