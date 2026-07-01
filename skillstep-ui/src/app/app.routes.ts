@@ -50,6 +50,13 @@ export const routes: Routes = [
       import('./features/profile/profile.routes')
         .then(m => m.PROFILE_ROUTES),
   },
+  // ── Report ─────────────────────────────────────────────
+  {
+    path: 'report',
+    loadChildren: () =>
+      import('./features/report/report.routes')
+        .then(m => m.REPORT_ROUTES),
+  },
 
   // ── Fallback ───────────────────────────────────────────
   {
