@@ -35,11 +35,16 @@ export class ReportService {
 
   // Télécharge le blob comme fichier
   downloadBlob(blob: Blob, filename: string): void {
+    // 1. Crée une URL temporaire (ex: blob:http://localhost:4200/...)
     const url  = URL.createObjectURL(blob);
+    // 2. Crée un lien virtuel <a> dans la mémoire du navigateur
     const link = document.createElement('a');
+    // 3. Associe l'URL du Blob et le nom du fichier voulu au lien
     link.href     = url;
     link.download = filename;
+    // 4. Simule un clic de l'utilisateur pour lancer le téléchargement automatique
     link.click();
+    // 5. Libère la mémoire du navigateur (très important pour éviter les fuites de mémoire !)
     URL.revokeObjectURL(url);
   }
 
