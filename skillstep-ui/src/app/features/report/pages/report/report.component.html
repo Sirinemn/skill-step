@@ -1,1 +1,268 @@
-<p>report works!</p>
+<div class="p-4 md:p-8 max-w-3xl">
+
+  <!-- En-tête -->
+  <div class="mb-8">
+    <h1 class="text-xl md:text-2xl font-bold
+               text-text-heading dark:text-gray-100 mb-1">
+      Rapport recruteur
+    </h1>
+    <p class="text-text-muted dark:text-gray-400 text-sm">
+      Génère un PDF professionnel à partager avec un recruteur
+      ou à joindre à ta candidature.
+    </p>
+  </div>
+
+  <!-- ── Prévisualisation du contenu ───────── -->
+  <div class="rounded-2xl border p-6 mb-6
+              bg-bg-surface dark:bg-gray-800
+              border-border-card dark:border-gray-700">
+
+    <h2 class="font-semibold text-sm text-text-heading
+               dark:text-gray-100 mb-4">
+      Contenu du rapport
+    </h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+      <div class="flex items-start gap-3 p-3 rounded-xl
+                  bg-bg-base dark:bg-gray-700/50">
+        <span class="text-lg shrink-0">👤</span>
+        <div>
+          <p class="text-sm font-medium
+                     text-text-heading dark:text-gray-100">
+            Profil
+          </p>
+          <p class="text-xs text-text-muted dark:text-gray-400">
+            Nom, poste visé, bio, liens professionnels
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-3 p-3 rounded-xl
+                  bg-bg-base dark:bg-gray-700/50">
+        <span class="text-lg shrink-0">📊</span>
+        <div>
+          <p class="text-sm font-medium
+                     text-text-heading dark:text-gray-100">
+            Statistiques
+          </p>
+          <p class="text-xs text-text-muted dark:text-gray-400">
+            Total logs, temps investi, jours actifs
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-3 p-3 rounded-xl
+                  bg-bg-base dark:bg-gray-700/50">
+        <span class="text-lg shrink-0">🏷️</span>
+        <div>
+          <p class="text-sm font-medium
+                     text-text-heading dark:text-gray-100">
+            Technologies
+          </p>
+          <p class="text-xs text-text-muted dark:text-gray-400">
+            Top catégories avec répartition du temps
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-3 p-3 rounded-xl
+                  bg-bg-base dark:bg-gray-700/50">
+        <span class="text-lg shrink-0">📓</span>
+        <div>
+          <p class="text-sm font-medium
+                     text-text-heading dark:text-gray-100">
+            Apprentissages
+          </p>
+          <p class="text-xs text-text-muted dark:text-gray-400">
+            Liste chronologique avec descriptions
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Conseil profil -->
+    <div *ngIf="!user$()?.targetRole || !user$()?.bio"
+         class="mt-4 flex items-start gap-3 p-3 rounded-xl
+                bg-amber-50 dark:bg-amber-950
+                border border-amber-200 dark:border-amber-800">
+      <span class="text-base shrink-0">💡</span>
+      <p class="text-xs text-amber-700 dark:text-amber-300">
+        Pour un rapport complet,
+        <a routerLink="/profile"
+           class="font-semibold underline">
+          complète ton profil
+        </a>
+        (poste visé et bio).
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ── Sélection de la période ────────────── -->
+  <div class="rounded-2xl border p-6 mb-6
+              bg-bg-surface dark:bg-gray-800
+              border-border-card dark:border-gray-700">
+
+    <h2 class="font-semibold text-sm text-text-heading
+               dark:text-gray-100 mb-4">
+      Sélectionner la période
+    </h2>
+
+    <!-- Boutons preset -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+      <button
+        *ngFor="let preset of presets"
+        (click)="selectedPreset = preset.value"
+        class="py-2.5 px-3 rounded-xl text-sm font-medium
+               border transition-all duration-150"
+        [class.bg-primary-500]="selectedPreset === preset.value"
+        [class.text-white]="selectedPreset === preset.value"
+        [class.border-primary-500]="selectedPreset === preset.value"
+        [class.bg-bg-base]="selectedPreset !== preset.value"
+        [class.dark:bg-gray-700]="selectedPreset !== preset.value"
+        [class.text-text-body]="selectedPreset !== preset.value"
+        [class.dark:text-gray-300]="selectedPreset !== preset.value"
+        [class.border-border-soft]="selectedPreset !== preset.value"
+        [class.dark:border-gray-600]="selectedPreset !== preset.value">
+        {{ preset.label }}
+      </button>
+    </div>
+
+    <!-- Période personnalisée -->
+    <div *ngIf="isCustom"
+         class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+      <div>
+        <label class="label dark:text-gray-300 text-xs">
+          Date de début
+        </label>
+        <input
+          type="date"
+          [(ngModel)]="customFrom"
+          [max]="customTo || ''"
+          class="input-field dark:bg-gray-700 dark:border-gray-600
+                 dark:text-gray-100 text-sm"
+        />
+      </div>
+      <div>
+        <label class="label dark:text-gray-300 text-xs">
+          Date de fin
+        </label>
+        <input
+          type="date"
+          [(ngModel)]="customTo"
+          [min]="customFrom || ''"
+          class="input-field dark:bg-gray-700 dark:border-gray-600
+                 dark:text-gray-100 text-sm"
+        />
+      </div>
+    </div>
+
+    <!-- Récap période sélectionnée -->
+    <div class="mt-4 flex items-center gap-2">
+      <span class="text-xs text-text-muted dark:text-gray-400">
+        Période sélectionnée :
+      </span>
+      <span class="badge-primary text-xs">
+        {{ periodLabel }}
+      </span>
+    </div>
+
+  </div>
+
+  <!-- ── Erreur ──────────────────────────────── -->
+  <div *ngIf="error$()"
+       class="rounded-xl p-4 mb-4 text-sm
+              bg-red-50 dark:bg-red-950
+              border border-red-200 dark:border-red-800
+              text-red-600 dark:text-red-300">
+    ❌ {{ error$() }}
+  </div>
+
+  <!-- ── Bouton générer ─────────────────────── -->
+  <button
+    (click)="onGenerate()"
+    [disabled]="!canGenerate"
+    class="w-full btn-primary py-4 text-base mb-8
+           disabled:opacity-50 disabled:cursor-not-allowed
+           flex items-center justify-center gap-3">
+
+    <span *ngIf="!isGenerating$()" class="text-xl">📄</span>
+    <span *ngIf="!isGenerating$()">
+      Générer mon PDF — {{ periodLabel }}
+    </span>
+
+    <!-- Spinner -->
+    <span *ngIf="isGenerating$()"
+          class="flex items-center gap-3">
+      <span class="w-5 h-5 border-2 border-white
+                   border-t-transparent rounded-full animate-spin">
+      </span>
+      Génération en cours...
+    </span>
+
+  </button>
+
+  <!-- ── Derniers rapports (historique session) ── -->
+  <div *ngIf="reports$().length > 0">
+
+    <h2 class="font-semibold text-sm text-text-heading
+               dark:text-gray-100 mb-3">
+      Rapports générés
+    </h2>
+
+    <div class="rounded-2xl border
+                bg-bg-surface dark:bg-gray-800
+                border-border-card dark:border-gray-700
+                overflow-hidden">
+
+      <div *ngFor="let report of reports$(); let last = last"
+           class="flex items-center gap-4 p-4"
+           [class.border-b]="!last"
+           [class.border-border-soft]="!last"
+           [class.dark:border-gray-700]="!last">
+
+        <!-- Icône -->
+        <div class="w-10 h-10 rounded-xl shrink-0
+                    flex items-center justify-center text-xl
+                    bg-primary-50 dark:bg-primary-950">
+          📋
+        </div>
+
+        <!-- Infos -->
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium
+                     text-text-heading dark:text-gray-100 truncate">
+            {{ report.filename }}
+          </p>
+          <p class="text-xs text-text-muted dark:text-gray-500 mt-0.5">
+            {{ report.period }} · Généré le {{ report.generatedAt }}
+          </p>
+        </div>
+
+        <!-- Bouton télécharger -->
+        <button
+          (click)="onDownloadFromHistory(report)"
+          class="flex items-center gap-2 shrink-0
+                 text-xs font-medium px-4 py-2 rounded-xl
+                 text-primary-500 dark:text-primary-400
+                 bg-primary-50 dark:bg-primary-950
+                 hover:bg-primary-100 dark:hover:bg-primary-900
+                 border border-primary-100 dark:border-primary-900
+                 transition-colors">
+          ↓ Télécharger
+        </button>
+
+      </div>
+
+    </div>
+
+    <p class="text-xs text-text-muted dark:text-gray-500
+               text-center mt-2">
+      L'historique est conservé pendant cette session.
+    </p>
+
+  </div>
+
+</div>
