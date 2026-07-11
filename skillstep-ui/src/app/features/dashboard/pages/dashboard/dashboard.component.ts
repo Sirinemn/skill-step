@@ -8,6 +8,7 @@ import { DashboardStats } from '../../models/dashboard-stats.model';
 import { DayActivity } from '../../models/day-activity.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterModule } from '@angular/router';
+import { ReportService } from '../../../../core/services/report.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,7 +21,8 @@ export class DashboardComponent implements OnInit {
   constructor(
     private readonly authService: AuthService,
     private readonly dashboardService: DashboardService,
-    private readonly destroyRef: DestroyRef
+    private readonly destroyRef: DestroyRef,
+    private readonly reportService: ReportService,
     
   ) {}
 
@@ -28,6 +30,9 @@ export class DashboardComponent implements OnInit {
   readonly stats$     = signal<DashboardStats | null>(null);
   readonly isLoading$ = signal(true);
   readonly error$     = signal<string | null>(null);
+  readonly recentReports$ = computed(() =>
+    this.reportService.reports$().slice(0, 3)
+  );
 
   // ── Computed depuis le signal user ──────────────────
   readonly firstName$ = computed(() => {
@@ -111,6 +116,9 @@ export class DashboardComponent implements OnInit {
           this.isLoading$.set(false);
         },
       });
+  }
+  onDownloadReport(report: any): void {
+    this.reportService.downloadBlob(report.blob, report.filename);
   }
 
 }
