@@ -309,14 +309,50 @@
                     border-border-card dark:border-gray-700">
 
           <p class="font-semibold text-sm mb-4
-                     text-text-heading dark:text-gray-100">
+                    text-text-heading dark:text-gray-100">
             Derniers rapports
           </p>
 
-          <p class="text-text-muted dark:text-gray-500
-                    text-xs text-center py-2">
-            Tes rapports PDF apparaîtront ici.
-          </p>
+          <!-- Aucun rapport généré -->
+          <div *ngIf="!recentReports$().length"
+              class="text-center py-3">
+            <p class="text-text-muted dark:text-gray-500 text-xs mb-2">
+              Aucun rapport généré.
+            </p>
+            <a routerLink="/report"
+              class="text-xs font-medium text-primary-500
+                      dark:text-primary-400 hover:underline">
+              Générer mon premier rapport →
+            </a>
+          </div>
+
+          <!-- Liste des rapports -->
+          <div *ngIf="recentReports$().length"
+              class="flex flex-col gap-3">
+            <div *ngFor="let report of recentReports$()"
+                class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="text-base">📋</span>
+                <div>
+                  <p class="text-xs font-medium
+                            text-text-heading dark:text-gray-200">
+                    {{ report.generatedAt }}
+                  </p>
+                  <p class="text-xs text-text-muted dark:text-gray-500">
+                    {{ report.period }}
+                  </p>
+                </div>
+              </div>
+              <button
+                (click)="onDownloadReport(report)"
+                class="text-xs font-medium
+                      text-primary-500 dark:text-primary-400
+                      hover:text-primary-600 transition-colors
+                      flex items-center gap-1">
+                ↓ Télécharger
+              </button>
+            </div>
+          </div>
 
         </div>
 
