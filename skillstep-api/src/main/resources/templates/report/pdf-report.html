@@ -305,8 +305,7 @@
         <div class="category-header">
             <span class="category-name" th:text="${cat.name}"></span>
             <span class="category-meta">
-          <span th:text="${cat.percentage}"></span>%
-          · <span th:text="${cat.logCount}"></span> log(s)
+          <span th:utext="${cat.percentage + '%&nbsp;·&nbsp;' + cat.logCount + '&nbsp;log(s)'}"></span>
         </span>
         </div>
         <span class="progress-bg">
