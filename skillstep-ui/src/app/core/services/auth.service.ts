@@ -1,9 +1,10 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient }                   from '@angular/common/http';
 import { Router }                       from '@angular/router';
-import { tap }                          from 'rxjs/operators';
+import { catchError, finalize, tap }                          from 'rxjs/operators';
 import { User }                         from '../models/user.model';
 import { environment }                  from '../../../environments/environment';
+import { of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -14,9 +15,13 @@ export class AuthService {
   private readonly currentUser$ = signal<User | null>(null);
   private readonly TOKEN_KEY    = 'skillstep_jwt';
 
+  // Indique si Angular a terminé la restauration de la session
+  private readonly initialized$ = signal(false);
+
   // Computed = valeur dérivée recalculée automatiquement
   readonly isAuthenticated$ = computed(() => this.currentUser$() !== null);
   readonly user$            = computed(() => this.currentUser$());
+  readonly isInitialized$ = computed(() => this.initialized$());
 
   constructor(
     private readonly http:   HttpClient,
@@ -24,11 +29,34 @@ export class AuthService {
   ) {
     // Au démarrage de l'app, si un token existe en storage,
     // on tente de récupérer le profil pour restaurer la session
-    if (this.getToken()) {
-      this.fetchCurrentUser().subscribe({
-        error: () => this.logout() // token expiré → déconnexion propre
-      });
+    const token = this.getToken();
+
+    if (!token) {
+      // Aucun token → aucune session à restaurer
+      this.initialized$.set(true);
+      return;
     }
+
+    // Token présent → on restaure la session
+    this.fetchCurrentUser()
+      .pipe(
+        catchError((err) => {
+          console.error(
+            'Erreur lors de la restauration de session :',
+            err
+          );
+
+          this.currentUser$.set(null);
+
+          return of(null);
+        }),
+        finalize(() => {
+          // Très important :
+          // le guard pourra maintenant continuer
+          this.initialized$.set(true);
+        })
+      )
+      .subscribe();
   }
 
   // Redirige vers Spring Boot qui redirige vers Google
