@@ -55,6 +55,9 @@
           padding: 0 36px;
           margin-bottom: 24px;
         }
+        .section + .section {
+          page-break-before: auto;
+        }
 
         .section-title {
           font-size: 13px;
@@ -121,6 +124,8 @@
           text-align: center;
           margin-right: 1.5%;
           vertical-align: top;
+          page-break-inside: avoid;
+          break-inside: avoid;
         }
 
         .kpi-value {
@@ -178,6 +183,9 @@
           margin-bottom: 10px;
           background: #F8F9FF;
           border-radius: 0 6px 6px 0;
+          /* empêche la coupure entre les pages */
+           page-break-inside: avoid;
+           break-inside: avoid;
         }
 
         .log-title {
