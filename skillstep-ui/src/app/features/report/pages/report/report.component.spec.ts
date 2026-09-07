@@ -3,15 +3,24 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReportComponent } from './report.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 describe('ReportComponent', () => {
   let component: ReportComponent;
   let fixture: ComponentFixture<ReportComponent>;
+  const mockActivatedRoute = {
+    snapshot: {
+      queryParams: {},
+    },
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ReportComponent,
         HttpClientTestingModule, 
+      ],
+      providers: [
+        { provide: ActivatedRoute, useValue: mockActivatedRoute }
       ]
     })
     .compileComponents();

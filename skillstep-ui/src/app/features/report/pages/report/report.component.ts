@@ -5,12 +5,13 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { getDisplayName } from '../../../../core/models/user.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 
 type PeriodPreset = 7 | 30 | 90 | 'custom';
 
 @Component({
   selector: 'app-report',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './report.component.html',
   styleUrl: './report.component.scss'
 })
