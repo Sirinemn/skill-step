@@ -10,8 +10,6 @@ skillstep-api/target/
 skillstep-api/.mvn/
 skillstep-api/mvnw
 skillstep-api/mvnw.cmd
-# Ne jamais pousser les secrets !
-skillstep-api/src/main/resources/application-prod.yml
 
 # --- Frontend (Angular) ---
 skillstep-ui/node_modules/
