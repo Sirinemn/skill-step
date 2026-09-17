@@ -33,14 +33,18 @@ USER skillstep
 COPY --from=builder /app/target/*.jar app.jar
 
 # Port exposé (documentation — Railway utilise $PORT)
-EXPOSE 8080
+EXPOSE ${PORT}
 
 # Variables d'environnement avec valeurs par défaut
 ENV SPRING_PROFILES_ACTIVE=prod
-ENV PORT=8080
+ENV PORT=${PORT}
 
 # Démarre Spring Boot
+# Options JVM optimisées pour les petits conteneurs
 ENTRYPOINT ["java", \
+  "-Xms256m", \
+  "-Xmx400m", \
+  "-XX:+UseSerialGC", \
   "-Djava.security.egd=file:/dev/./urandom", \
   "-Dserver.port=${PORT}", \
   "-jar", "app.jar"]
