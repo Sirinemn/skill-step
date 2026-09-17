@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL}              # injecté par Railway/Render
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    show-sql: false                   # jamais de logs SQL en prod
+  jmx:
+    enabled: false          # désactive JMX inutile en prod
+  main:
+    lazy-initialization: true  # charge les beans à la demande
+
+springdoc:
+  swagger-ui:
+    enabled: false                    # Swagger désactivé en prod
+
+logging:
+  level:
+    com.skillstep: INFO
+    org.springframework.security: WARN
+    root: WARN
+
+server:
+  # En prod sur Railway, le port est injecté automatiquement
+  port: ${PORT:8080}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health    # uniquement health en prod
